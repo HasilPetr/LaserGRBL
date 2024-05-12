@@ -141,7 +141,41 @@
     <value>GrowAndShrink</value>
   </data>
   <data name="tableLayoutPanel6.ColumnCount" type="System.Int32, mscorlib">
-    <value>4</value>
+    <value>7</value>
+  </data>
+  <data name="LblBorderTracingX.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="LblBorderTracingX.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="LblBorderTracingX.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="LblBorderTracingX.Location" type="System.Drawing.Point, System.Drawing">
+    <value>81, 5</value>
+  </data>
+  <data name="LblBorderTracingX.Size" type="System.Drawing.Size, System.Drawing">
+    <value>14, 13</value>
+  </data>
+  <data name="LblBorderTracingX.TabIndex" type="System.Int32, mscorlib">
+    <value>29</value>
+  </data>
+  <data name="LblBorderTracingX.Text" xml:space="preserve">
+    <value>X</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingX.Name" xml:space="preserve">
+    <value>LblBorderTracingX</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingX.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingX.Parent" xml:space="preserve">
+    <value>tableLayoutPanel6</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingX.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="LblBorderTracing.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Left</value>
@@ -152,7 +186,6 @@
   <data name="LblBorderTracing.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="LblBorderTracing.Location" type="System.Drawing.Point, System.Drawing">
     <value>3, 5</value>
   </data>
@@ -175,67 +208,7 @@
     <value>tableLayoutPanel6</value>
   </data>
   <data name="&gt;&gt;LblBorderTracing.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="LblBorderTracingmm.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Left</value>
-  </data>
-  <data name="LblBorderTracingmm.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="LblBorderTracingmm.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="LblBorderTracingmm.Location" type="System.Drawing.Point, System.Drawing">
-    <value>139, 5</value>
-  </data>
-  <data name="LblBorderTracingmm.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 13</value>
-  </data>
-  <data name="LblBorderTracingmm.TabIndex" type="System.Int32, mscorlib">
-    <value>22</value>
-  </data>
-  <data name="LblBorderTracingmm.Text" xml:space="preserve">
-    <value>mm/min</value>
-  </data>
-  <data name="&gt;&gt;LblBorderTracingmm.Name" xml:space="preserve">
-    <value>LblBorderTracingmm</value>
-  </data>
-  <data name="&gt;&gt;LblBorderTracingmm.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;LblBorderTracingmm.Parent" xml:space="preserve">
-    <value>tableLayoutPanel6</value>
-  </data>
-  <data name="&gt;&gt;LblBorderTracingmm.ZOrder" xml:space="preserve">
     <value>1</value>
-  </data>
-  <data name="IIBorderTracing.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Left</value>
-  </data>
-  <data name="IIBorderTracing.Location" type="System.Drawing.Point, System.Drawing">
-    <value>78, 4</value>
-  </data>
-  <data name="IIBorderTracing.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>0, 3, 3, 3</value>
-  </data>
-  <data name="IIBorderTracing.Size" type="System.Drawing.Size, System.Drawing">
-    <value>55, 15</value>
-  </data>
-  <data name="IIBorderTracing.TabIndex" type="System.Int32, mscorlib">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;IIBorderTracing.Name" xml:space="preserve">
-    <value>IIBorderTracing</value>
-  </data>
-  <data name="&gt;&gt;IIBorderTracing.Type" xml:space="preserve">
-    <value>LaserGRBL.UserControls.NumericInput.IntegerInputRanged, LaserGRBL, Version=6.1.1.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;IIBorderTracing.Parent" xml:space="preserve">
-    <value>tableLayoutPanel6</value>
-  </data>
-  <data name="&gt;&gt;IIBorderTracing.ZOrder" xml:space="preserve">
-    <value>2</value>
   </data>
   <data name="BtnPSHelper.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Right</value>
@@ -243,7 +216,7 @@
   <data name="BtnPSHelper.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGOfPtRkwAAACBjSFJNAAB6
-        JQAAgIMAAPn/AACA6QAAdTAAAOpgAAA6mAAAF2+SX8VGAAAACXBIWXMAAAsTAAALEwEAmpwYAAACrUlE
+        JQAAgIMAAPn/AACA6QAAdTAAAOpgAAA6mAAAF2+SX8VGAAAACXBIWXMAAAsMAAALDAE/QCLIAAACrUlE
         QVQ4T6WO60uTYRjG3/+kz0F9iMjEMnClhZonEMdi1WxoHoZzMzE3DTwhKttCN0MqZROdluiMSkQdw8OG
         ZjrJaZ42Z21NrWnbxJ2eq/d1JH7wQ+ED1/PcXPf1/O6bAnAmnWr+j44LaftaWNFnDzf22OZrOtevngw1
         dC6zZL3rqzKtJVys+ERbJwClrfPDtCDtWGEa+OkDGTS5iWpwc1emnoqVa5dGjF8PyYoTGJ07gFRpQE1z
@@ -277,13 +250,133 @@
     <value>BtnPSHelper</value>
   </data>
   <data name="&gt;&gt;BtnPSHelper.Type" xml:space="preserve">
-    <value>LaserGRBL.UserControls.ImageButton, LaserGRBL, Version=6.1.1.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LaserGRBL.UserControls.ImageButton, LaserGRBL, Version=6.2.2.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BtnPSHelper.Parent" xml:space="preserve">
     <value>tableLayoutPanel6</value>
   </data>
   <data name="&gt;&gt;BtnPSHelper.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="IIBorderTracingX.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="IIBorderTracingX.Location" type="System.Drawing.Point, System.Drawing">
+    <value>98, 4</value>
+  </data>
+  <data name="IIBorderTracingX.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 3, 3, 3</value>
+  </data>
+  <data name="IIBorderTracingX.Size" type="System.Drawing.Size, System.Drawing">
+    <value>55, 15</value>
+  </data>
+  <data name="IIBorderTracingX.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;IIBorderTracingX.Name" xml:space="preserve">
+    <value>IIBorderTracingX</value>
+  </data>
+  <data name="&gt;&gt;IIBorderTracingX.Type" xml:space="preserve">
+    <value>LaserGRBL.UserControls.NumericInput.IntegerInputRanged, LaserGRBL, Version=6.2.2.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;IIBorderTracingX.Parent" xml:space="preserve">
+    <value>tableLayoutPanel6</value>
+  </data>
+  <data name="&gt;&gt;IIBorderTracingX.ZOrder" xml:space="preserve">
     <value>3</value>
+  </data>
+  <data name="LblBorderTracingY.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="LblBorderTracingY.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="LblBorderTracingY.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="LblBorderTracingY.Location" type="System.Drawing.Point, System.Drawing">
+    <value>159, 5</value>
+  </data>
+  <data name="LblBorderTracingY.Size" type="System.Drawing.Size, System.Drawing">
+    <value>14, 13</value>
+  </data>
+  <data name="LblBorderTracingY.TabIndex" type="System.Int32, mscorlib">
+    <value>30</value>
+  </data>
+  <data name="LblBorderTracingY.Text" xml:space="preserve">
+    <value>Y</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingY.Name" xml:space="preserve">
+    <value>LblBorderTracingY</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingY.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingY.Parent" xml:space="preserve">
+    <value>tableLayoutPanel6</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingY.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="LblBorderTracingmm.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="LblBorderTracingmm.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="LblBorderTracingmm.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="LblBorderTracingmm.Location" type="System.Drawing.Point, System.Drawing">
+    <value>237, 5</value>
+  </data>
+  <data name="LblBorderTracingmm.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 13</value>
+  </data>
+  <data name="LblBorderTracingmm.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="LblBorderTracingmm.Text" xml:space="preserve">
+    <value>mm/min</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingmm.Name" xml:space="preserve">
+    <value>LblBorderTracingmm</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingmm.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingmm.Parent" xml:space="preserve">
+    <value>tableLayoutPanel6</value>
+  </data>
+  <data name="&gt;&gt;LblBorderTracingmm.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="IIBorderTracingY.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Left</value>
+  </data>
+  <data name="IIBorderTracingY.Location" type="System.Drawing.Point, System.Drawing">
+    <value>176, 4</value>
+  </data>
+  <data name="IIBorderTracingY.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>0, 3, 3, 3</value>
+  </data>
+  <data name="IIBorderTracingY.Size" type="System.Drawing.Size, System.Drawing">
+    <value>55, 15</value>
+  </data>
+  <data name="IIBorderTracingY.TabIndex" type="System.Int32, mscorlib">
+    <value>27</value>
+  </data>
+  <data name="&gt;&gt;IIBorderTracingY.Name" xml:space="preserve">
+    <value>IIBorderTracingY</value>
+  </data>
+  <data name="&gt;&gt;IIBorderTracingY.Type" xml:space="preserve">
+    <value>LaserGRBL.UserControls.NumericInput.IntegerInputRanged, LaserGRBL, Version=6.2.2.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;IIBorderTracingY.Parent" xml:space="preserve">
+    <value>tableLayoutPanel6</value>
+  </data>
+  <data name="&gt;&gt;IIBorderTracingY.ZOrder" xml:space="preserve">
+    <value>6</value>
   </data>
   <data name="tableLayoutPanel6.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -313,7 +406,7 @@
     <value>0</value>
   </data>
   <data name="tableLayoutPanel6.LayoutSettings" type="System.Windows.Forms.TableLayoutSettings, System.Windows.Forms">
-    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LblBorderTracing" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="LblBorderTracingmm" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="IIBorderTracing" Row="0" RowSpan="1" Column="1" ColumnSpan="1" /&gt;&lt;Control Name="BtnPSHelper" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,275" /&gt;&lt;Rows Styles="AutoSize,0,Absolute,23,Absolute,23" /&gt;&lt;/TableLayoutSettings&gt;</value>
+    <value>&lt;?xml version="1.0" encoding="utf-16"?&gt;&lt;TableLayoutSettings&gt;&lt;Controls&gt;&lt;Control Name="LblBorderTracingX" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="LblBorderTracing" Row="0" RowSpan="1" Column="0" ColumnSpan="1" /&gt;&lt;Control Name="BtnPSHelper" Row="0" RowSpan="1" Column="6" ColumnSpan="1" /&gt;&lt;Control Name="IIBorderTracingX" Row="0" RowSpan="1" Column="2" ColumnSpan="1" /&gt;&lt;Control Name="LblBorderTracingY" Row="0" RowSpan="1" Column="3" ColumnSpan="1" /&gt;&lt;Control Name="LblBorderTracingmm" Row="0" RowSpan="1" Column="5" ColumnSpan="1" /&gt;&lt;Control Name="IIBorderTracingY" Row="0" RowSpan="1" Column="4" ColumnSpan="1" /&gt;&lt;/Controls&gt;&lt;Columns Styles="AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,AutoSize,0,Absolute,20" /&gt;&lt;Rows Styles="AutoSize,0" /&gt;&lt;/TableLayoutSettings&gt;</value>
   </data>
   <data name="GbSpeed.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -394,7 +487,7 @@ Click for more information...</value>
     <value>BtnModulationInfo</value>
   </data>
   <data name="&gt;&gt;BtnModulationInfo.Type" xml:space="preserve">
-    <value>LaserGRBL.UserControls.ImageButton, LaserGRBL, Version=6.1.1.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LaserGRBL.UserControls.ImageButton, LaserGRBL, Version=6.2.2.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BtnModulationInfo.Parent" xml:space="preserve">
     <value>tableLayoutPanel7</value>
@@ -451,7 +544,7 @@ Click for more information...</value>
     <value>IIMinPower</value>
   </data>
   <data name="&gt;&gt;IIMinPower.Type" xml:space="preserve">
-    <value>LaserGRBL.UserControls.NumericInput.IntegerInputRanged, LaserGRBL, Version=6.1.1.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LaserGRBL.UserControls.NumericInput.IntegerInputRanged, LaserGRBL, Version=6.2.2.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;IIMinPower.Parent" xml:space="preserve">
     <value>tableLayoutPanel7</value>
@@ -530,7 +623,7 @@ Click for more information...</value>
     <value>BtnOnOffInfo</value>
   </data>
   <data name="&gt;&gt;BtnOnOffInfo.Type" xml:space="preserve">
-    <value>LaserGRBL.UserControls.ImageButton, LaserGRBL, Version=6.1.1.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LaserGRBL.UserControls.ImageButton, LaserGRBL, Version=6.2.2.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BtnOnOffInfo.Parent" xml:space="preserve">
     <value>tableLayoutPanel7</value>
@@ -611,7 +704,7 @@ Click for more information...</value>
     <value>IIMaxPower</value>
   </data>
   <data name="&gt;&gt;IIMaxPower.Type" xml:space="preserve">
-    <value>LaserGRBL.UserControls.NumericInput.IntegerInputRanged, LaserGRBL, Version=6.1.1.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LaserGRBL.UserControls.NumericInput.IntegerInputRanged, LaserGRBL, Version=6.2.2.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;IIMaxPower.Parent" xml:space="preserve">
     <value>tableLayoutPanel7</value>
@@ -952,7 +1045,7 @@ Click for more information...</value>
     <value>BtnColorFilter</value>
   </data>
   <data name="&gt;&gt;BtnColorFilter.Type" xml:space="preserve">
-    <value>LaserGRBL.UserControls.ImageButton, LaserGRBL, Version=6.1.1.0, Culture=neutral, PublicKeyToken=null</value>
+    <value>LaserGRBL.UserControls.ImageButton, LaserGRBL, Version=6.2.2.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;BtnColorFilter.Parent" xml:space="preserve">
     <value>tableLayoutPanel2</value>
