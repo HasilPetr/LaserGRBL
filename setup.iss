@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "LaserGRBL"
-#define MyAppVersion "6.2.2"
+#define MyAppVersion "7.14.0"
 #define MyAppVersionName "Rhydon"
 #define MyAppPublisher "LaserGRBL"
 #define MyAppURL "https://lasergrbl.com"
@@ -64,6 +64,7 @@ Source: ".\LaserGRBL\bin\Release\tr-TR\LaserGRBL.resources.dll"; DestDir: "{app}
 Source: ".\LaserGRBL\bin\Release\ro-RO\LaserGRBL.resources.dll"; DestDir: "{app}\ro-RO"; Flags: ignoreversion
 Source: ".\LaserGRBL\bin\Release\nl-NL\LaserGRBL.resources.dll"; DestDir: "{app}\nl-NL"; Flags: ignoreversion
 Source: ".\LaserGRBL\bin\Release\uk\LaserGRBL.resources.dll"; DestDir: "{app}\uk"; Flags: ignoreversion
+Source: ".\LaserGRBL\bin\Release\ja-JP\LaserGRBL.resources.dll"; DestDir: "{app}\ja-JP"; Flags: ignoreversion
 Source: ".\LaserGRBL\bin\Release\Driver\*"; DestDir: "{app}\Driver"; Flags: ignoreversion
 Source: ".\LaserGRBL\bin\Release\Firmware\*"; DestDir: "{app}\Firmware"; Flags: ignoreversion
 Source: ".\LaserGRBL\bin\Release\LaserGRBL.exe.config"; DestDir: "{app}"; Flags: ignoreversion
@@ -77,6 +78,8 @@ Source: ".\zippedbutton.ico"; DestDir: "{app}"; Flags: ignoreversion
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{commonprograms}\{#MyAppName} (disable opengl)"; Filename: "{app}\{#MyAppExeName}"; Parameters: "nogl"
+Name: "{commonprograms}\{#MyAppName} (soft opengl)"; Filename: "{app}\{#MyAppExeName}"; Parameters: "swgl"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 ;Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: quicklaunchicon
 

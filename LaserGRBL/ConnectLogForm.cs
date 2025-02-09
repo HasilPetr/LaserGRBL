@@ -4,6 +4,8 @@
 // This program is distributed in the hope that it will be useful, but  WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GPLv3  General Public License for more details.
 // You should have received a copy of the GPLv3 General Public License  along with this program; if not, write to the Free Software  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,  USA. using System;
 
+using LaserGRBL.Icons;
+using LaserGRBL.UserControls;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -15,7 +17,7 @@ namespace LaserGRBL
 	/// </summary>
 	public partial class ConnectLogForm : System.Windows.Forms.UserControl
 	{
-		private object[] baudRates = { 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600 };
+		private object[] baudRates = { 4800, 9600, 19200, 38400, 57600, 115200, 230400, 256000, 460800, 921600 };
 		public ComWrapper.WrapperType currentWrapper;
 
 		GrblCore Core;
@@ -25,20 +27,24 @@ namespace LaserGRBL
 		{
 			currentWrapper = Settings.GetObject("ComWrapper Protocol", ComWrapper.WrapperType.UsbSerial);
 			InitializeComponent();
-		}
+        }
 
-		public void SetCore(GrblCore core)
+        public void SetCore(GrblCore core)
 		{
 			Core = core;
 			Core.OnFileLoaded += OnFileLoaded;
 			Core.OnLoopCountChange += OnLoopCountChanged;
-
 			CmdLog.SetCom(core);
-			
-			PB.Bars.Add(new LaserGRBL.UserControls.DoubleProgressBar.Bar(Color.LightSkyBlue));
-			PB.Bars.Add(new LaserGRBL.UserControls.DoubleProgressBar.Bar(Color.Pink));
 
-			InitSpeedCB();
+			PB.Bars.Add(new LaserGRBL.UserControls.DoubleProgressBar.Bar(ColorScheme.PreviewCommandWait));
+			PB.Bars.Add(new LaserGRBL.UserControls.DoubleProgressBar.Bar(ColorScheme.PreviewCommandOK));
+			Size btnSize = new Size(20, 20);
+			IconsMgr.PrepareButton(BtnRunProgram, "mdi-play-circle", btnSize);
+            IconsMgr.PrepareButton(BtnAbortProgram, "mdi-stop-circle", btnSize);
+            IconsMgr.PrepareButton(BtnConnectDisconnect, "mdi-power-plug", btnSize, "mdi-power-plug-off");
+            IconsMgr.PrepareButton(BtnOpen, "mdi-folder", btnSize);
+
+            InitSpeedCB();
 			InitPortCB();
 
 			RestoreConf();
@@ -184,7 +190,7 @@ namespace LaserGRBL
 
 		void ApplyConfig()
 		{
-			if ((currentWrapper == ComWrapper.WrapperType.UsbSerial || currentWrapper == ComWrapper.WrapperType.UsbSerial2) && CBPort.Text != null && CBSpeed.SelectedItem != null)
+			if ((currentWrapper == ComWrapper.WrapperType.UsbSerial || currentWrapper == ComWrapper.WrapperType.UsbSerial2 || currentWrapper == ComWrapper.WrapperType.RJCPSerial) && CBPort.Text != null && CBSpeed.SelectedItem != null)
 				Core.Configure(currentWrapper, CBPort.Text, (int)CBSpeed.SelectedItem);
 			else if (currentWrapper == ComWrapper.WrapperType.Telnet || currentWrapper == ComWrapper.WrapperType.LaserWebESP8266)
 				Core.Configure(currentWrapper, (string)TxtAddress.Text);
@@ -194,7 +200,7 @@ namespace LaserGRBL
 
 		void BtnOpenClick(object sender, EventArgs e)
 		{
-			Core.OpenFile(ParentForm);
+			Core.OpenFile();
 		}
 
 		void BtnRunProgramClick(object sender, EventArgs e)
@@ -291,7 +297,7 @@ namespace LaserGRBL
 		private void UpdateConf()
 		{
 			tableLayoutPanel4.SuspendLayout();
-			CBPort.Visible = CBSpeed.Visible = LblComPort.Visible = LblBaudRate.Visible = (currentWrapper == ComWrapper.WrapperType.UsbSerial || currentWrapper == ComWrapper.WrapperType.UsbSerial2);
+			CBPort.Visible = CBSpeed.Visible = LblComPort.Visible = LblBaudRate.Visible = (currentWrapper == ComWrapper.WrapperType.UsbSerial || currentWrapper == ComWrapper.WrapperType.UsbSerial2 || currentWrapper == ComWrapper.WrapperType.RJCPSerial);
 			TxtAddress.Visible = LblAddress.Visible = (currentWrapper == ComWrapper.WrapperType.Telnet || currentWrapper == ComWrapper.WrapperType.LaserWebESP8266);
 			LblAddress.Text = (currentWrapper == ComWrapper.WrapperType.Telnet ? "IP:PORT" : "Socket URL");
 			TxtEmulator.Visible = LblEmulator.Visible = (currentWrapper == ComWrapper.WrapperType.Emulator);
@@ -333,7 +339,24 @@ namespace LaserGRBL
 
 		internal void OnColorChange()
 		{
-			CmdLog.Invalidate();
+			TbFileName.BackColor = ColorScheme.LogBackColor;
+            TbFileName.ForeColor = ColorScheme.FormForeColor;
+
+            TbFileName.BorderColor = ColorScheme.ControlsBorder;
+            TbFileName.ForeColor = ColorScheme.FormForeColor;
+
+            TxtManualCommand.WaterMarkColor = ColorScheme.ControlsBorder;
+            TxtManualCommand.WaterMarkActiveColor = ColorScheme.ControlsBorder;
+            TxtManualCommand.BackColor = ColorScheme.LogBackColor;
+			TxtManualCommand.ForeColor = ColorScheme.FormForeColor;
+
+			PB.ForeColor = ColorScheme.FormForeColor;
+            PB.FillColor = ColorScheme.LogBackColor;
+            PB.Bars.Clear();
+			PB.Bars.Add(new LaserGRBL.UserControls.DoubleProgressBar.Bar(ColorScheme.PreviewCommandWait));
+			PB.Bars.Add(new LaserGRBL.UserControls.DoubleProgressBar.Bar(ColorScheme.PreviewCommandOK));
+            CmdLog.OnColorChange();
+            CmdLog.Invalidate();
 		}
 
 		private void TxtManualCommand_Enter(object sender, EventArgs e)
@@ -375,7 +398,7 @@ namespace LaserGRBL
 			}
 		}
 
-		internal void ConfigFromOrtur(string config)
+		internal void ConfigFromWiFiForm(string config)
 		{
 			if (config != null)
 			{
@@ -385,6 +408,12 @@ namespace LaserGRBL
 				//if (BtnConnectDisconnect.Enabled && Core.MachineStatus == GrblCore.MacStatus.Disconnected)
 				//	BtnConnectDisconnectClick(null, null);
 			}
-		}
-	}
+        }
+
+        private void CmdLog_Paint(object sender, System.Windows.Forms.PaintEventArgs e)
+        {
+            ControlPaint.DrawBorder(e.Graphics, e.ClipRectangle, ColorScheme.ControlsBorder, ButtonBorderStyle.Solid);
+        }
+
+    }
 }

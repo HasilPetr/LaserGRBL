@@ -5,7 +5,6 @@
 // You should have received a copy of the GPLv3 General Public License  along with this program; if not, write to the Free Software  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,  USA. using System;
 
 using System;
-using System.Diagnostics;
 using System.Threading;
 
 namespace Tools
@@ -14,26 +13,26 @@ namespace Tools
 	public class ThreadObject : ThreadClass
 	{
 
-		private System.Threading.ThreadStart _delegatesub;
+		private ThreadStart _delegateSub;
 
-		private System.Threading.ThreadStart _firsrunsub;
-		public ThreadObject(System.Threading.ThreadStart DelegateSub, int SleepTime, bool AutoDispose, string Name, System.Threading.ThreadStart FirstRunSub) : base(SleepTime, AutoDispose, Name)
+		private ThreadStart _firstRunSub;
+		public ThreadObject(ThreadStart DelegateSub, int SleepTime, bool AutoDispose, string Name, ThreadStart FirstRunSub, ThreadPriority priority = ThreadPriority.Normal, ApartmentState apartment = ApartmentState.Unknown, EventWaitHandle ev = null) : base(SleepTime, AutoDispose, Name, priority, apartment, ev)
 		{
-			_delegatesub = DelegateSub;
-			_firsrunsub = FirstRunSub;
+			_delegateSub = DelegateSub;
+			_firstRunSub = FirstRunSub;
 		}
 
 		protected override void OnFirstRun()
 		{
-			if ((_firsrunsub != null)) {
-				_firsrunsub();
+			if ((_firstRunSub != null)) {
+				_firstRunSub();
 			}
 		}
 
 		protected override void DoTheWork()
 		{
-			if ((_delegatesub != null)) {
-				_delegatesub();
+			if ((_delegateSub != null)) {
+				_delegateSub();
 			}
 		}
 
@@ -44,14 +43,22 @@ namespace Tools
 	{
 
 		protected ManualResetEvent MustExit;
-			//checked 26/05/2008
-		protected internal Thread TH;
+		private EventWaitHandle UserHandle;
 
-		protected ThreadClass(int SleepTime, bool AutoDispose, string Name)
+		//checked 26/05/2008
+		protected internal Thread TH;
+		private ApartmentState mApartment;
+		protected internal ThreadPriority mPriority;
+
+		private WaitHandle[] mHandleArray;
+		protected ThreadClass(int SleepTime, bool AutoDispose, string Name, ThreadPriority priority, ApartmentState apartment = ApartmentState.Unknown, EventWaitHandle ev = null)
 		{
+			mApartment = apartment;
+			mPriority = priority;
+			UserHandle = ev;
+
 			this.SleepTime = SleepTime;
-			if (AutoDispose)
-				System.Windows.Forms.Application.ApplicationExit += this.AutoDispose;
+			if (AutoDispose) System.Windows.Forms.Application.ApplicationExit += this.AutoDispose;
 			_Name = Name;
 		}
 
@@ -59,7 +66,8 @@ namespace Tools
 		protected virtual bool MustRun()
 		{
 			//return true if must run
-			return (MustExit != null) && !MustExit.WaitOne(SleepTime, false);
+
+			return mHandleArray != null && (WaitHandle.WaitAny(mHandleArray, SleepTime) != 0); // 0 = MustExit
 		}
 
 
@@ -88,7 +96,12 @@ namespace Tools
 		{
 			if (TH == null) {
 				MustExit = new ManualResetEvent(false);
-				TH = new System.Threading.Thread(Loop);
+				if (UserHandle != null) mHandleArray = new WaitHandle[] { MustExit, UserHandle };
+				else mHandleArray = new WaitHandle[] { MustExit };
+
+				TH = new Thread(Loop);
+				if (mApartment != ApartmentState.Unknown) TH.SetApartmentState(mApartment);
+				TH.Priority = mPriority;
 				TH.Name = this.Name;
 				TH.Start();
 			}
@@ -140,10 +153,11 @@ namespace Tools
 
 				TH = null;
 				MustExit = null;
+				mHandleArray = null;
 			}
 		}
 
-		private void AutoDispose(object sender, System.EventArgs e)
+		private void AutoDispose(object sender, EventArgs e)
 		{
 			System.Windows.Forms.Application.ApplicationExit -= this.AutoDispose;
 			Dispose();

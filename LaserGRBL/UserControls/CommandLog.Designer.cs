@@ -49,10 +49,12 @@
 			// 
 			this.IL.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("IL.ImageStream")));
 			this.IL.TransparentColor = System.Drawing.Color.Transparent;
-			this.IL.Images.SetKeyName(0, "GcodeQueue.png");
-			this.IL.Images.SetKeyName(1, "GcodeOK.png");
-			this.IL.Images.SetKeyName(2, "GcodeKO.png");
-			this.IL.Images.SetKeyName(3, "GCodeInfo.png");
+			this.IL.Images.SetKeyName(0, "logqueued.png");
+			this.IL.Images.SetKeyName(1, "logok.png");
+			this.IL.Images.SetKeyName(2, "logko.png");
+			this.IL.Images.SetKeyName(3, "loginfo.png");
+			this.IL.Images.SetKeyName(4, "warning.png");
+			this.IL.Images.SetKeyName(5, "diagnostic.png");
 			// 
 			// CommandLog
 			// 

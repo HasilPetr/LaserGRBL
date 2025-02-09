@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using LaserGRBL.CSV;
+using LaserGRBL.Obj3D;
 
 namespace LaserGRBL
 {
@@ -89,7 +90,7 @@ namespace LaserGRBL
 		}
 	}
 
-	public partial class GrblCommand : ICloneable, IGrblRow
+	public partial class GrblCommand : ICloneable, IGrblRow, IDisposable
 	{
 		public class Element
 		{
@@ -127,21 +128,42 @@ namespace LaserGRBL
 			//{mNumber = p;}
 		}
 
-		private string mLine;
-		private string mCodedResult;
-		private TimeSpan mTimeOffset;
-		private Dictionary<char, GrblCommand.Element> mHelper;
-		private int mRepeatCount;
+        private class ResultWrapper
+        {
+            public string CodedResult;
+        }
+
+        private string mLine;
+        private ResultWrapper mResultWrapper;
+        private TimeSpan mTimeOffset;
+        private Dictionary<char, GrblCommand.Element> mHelper;
+        private int mRepeatCount;
+        public Object3DDisplayList LinkedDisplayList { get; internal set; } = null;
+
+
+        public string mCodedResult
+        {
+            get { return mResultWrapper.CodedResult; }
+            set { mResultWrapper.CodedResult = value; }
+        }
 
 		public GrblCommand(string line, int repeat = 0, bool preservecase = false)
-		{ 
+		{
+			ClearResult();
 			mLine = line.Trim();
 			if (!preservecase) mLine = mLine.ToUpper();
-			mRepeatCount = repeat; 
+			mRepeatCount = repeat;
 		}
+
+		public void ClearResult()
+		{
+            mResultWrapper = new ResultWrapper();
+			LinkedDisplayList?.Invalidate();
+        }
 
 		public GrblCommand(IEnumerable<Element> elements)
 		{
+			ClearResult();
 			mLine = "";
 			foreach (GrblCommand.Element e in elements)
 				mLine = mLine + e.ToString() + " ";
@@ -150,6 +172,7 @@ namespace LaserGRBL
 
 		public GrblCommand(Element first, GrblCommand toappend)
 		{
+			ClearResult();
 			mLine = string.Format("{0} {1}", first, toappend.mLine).ToUpper().Trim();
 		}
 
@@ -299,7 +322,8 @@ namespace LaserGRBL
 		public void SetResult(string result, bool decode) //ERROR:NUM
 		{
 			mCodedResult = result.ToUpper().Trim();
-		}
+            LinkedDisplayList?.Invalidate();
+        }
 
 		public bool IsGrblCommand
 		{ get { return mLine.StartsWith("$"); } }
@@ -450,22 +474,46 @@ namespace LaserGRBL
 
 		public override string ToString()
 		{ return this.mLine; }
-	}
+
+        public void Dispose()
+        {
+			LinkedDisplayList = null;
+        }
+    }
 
 	public class GrblMessage : IGrblRow
 	{
 		public enum MessageType
-		{Startup, Config, Alarm, Feedback, Position, Others}
+		{
+			Startup,	//from grbl
+			Config,		//from grbl
+			Alarm,		//from grbl
+			Feedback,   //from grbl
+			Position,   //from grbl
+			Others,		//from grbl
+
+			Warning,	//from LaserGRBL
+			Diagnostic, //from LaserGRBL
+		}
+
 
 		private string mNativeMessage;
 		private string mMessage;
 		private string mToolTip;
 		private MessageType mType;
-		
+
+		public GrblMessage(string message, MessageType type)
+		{
+			mMessage = message.Trim();
+			mNativeMessage = mMessage;
+			mType = type;
+		}
+
 		public GrblMessage(string message, bool decode)
 		{
 			mMessage = message.Trim();
 			mNativeMessage = mMessage;
+
 			if (mMessage.ToLower().StartsWith("$") && mMessage.Contains("=")) //if (mMessage.ToLower().StartsWith("$") || mMessage.ToLower().StartsWith("~") || mMessage.ToLower().StartsWith("!") || mMessage.ToLower().StartsWith("?") || mMessage.ToLower().StartsWith("ctrl"))
 				mType = MessageType.Config;
 			else if (mMessage.ToLower().StartsWith("grbl"))
@@ -545,6 +593,15 @@ namespace LaserGRBL
 		{get { return Color.Black; }} //normalmente per questi messaggi non c'è un right
 
 		public int ImageIndex
-		{ get { return 3; } }
+		{ get 
+			{
+				if (mType == MessageType.Warning)
+					return 4;
+				else if (mType == MessageType.Diagnostic)
+					return 5;
+				else
+					return 3; 
+			}
+		}
 	}
 }

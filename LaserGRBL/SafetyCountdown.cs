@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
+﻿using LaserGRBL.Icons;
+using LaserGRBL.UserControls;
+using System;
 using System.Media;
-using System.Text;
 using System.Windows.Forms;
 
 namespace LaserGRBL
 {
-	public partial class SafetyCountdown : Form
+    public partial class SafetyCountdown : Form
 	{
 		int down;
 		string lbl;
@@ -19,7 +15,13 @@ namespace LaserGRBL
 		public SafetyCountdown()
 		{
 			InitializeComponent();
-			down = 5;
+			BackColor = ColorScheme.FormBackColor;
+			ForeColor = ColorScheme.FormForeColor;
+			ThemeMgr.SetTheme(this);
+			IconsMgr.PreparePictureBox(pictureBox1, "mdi-safety-goggles");
+			IconsMgr.PrepareButton(BtnStart, "mdi-checkbox-marked");
+            IconsMgr.PrepareButton(BtnCancel, "mdi-close-box");
+            down = 5;
 			lbl = BtnStart.Text;
 			BtnStart.Text = $"{lbl} ({down})";
 		}
@@ -44,20 +46,39 @@ namespace LaserGRBL
 
 		private void TimCountDown_Tick(object sender, EventArgs e)
 		{
-			down = down - 1;
+			down = Math.Max(0, down-1);
 
 			BtnStart.Text = $"{lbl} ({down})";
 			Application.DoEvents();
 
 			if (down == 0)
-			{
-				DialogResult = DialogResult.OK;
-				TimCountDown.Enabled = false;
-			}
+				ExitOK();
 			else
-			{
 				DoBeep();
-			}
+		}
+
+		private void BtnStart_Click(object sender, EventArgs e)
+		{
+			ExitOK();
+		}
+
+		private void BtnCancel_Click(object sender, EventArgs e)
+		{
+			ExitKO();
+		}
+
+		private void ExitOK()
+		{
+			TimCountDown.Enabled = false;
+			DialogResult = DialogResult.OK;
+			Close();
+		}
+
+		private void ExitKO()
+		{
+			TimCountDown.Enabled = false;
+			DialogResult = DialogResult.Cancel;
+			Close();
 		}
 
 		private static void DoBeep()
@@ -94,5 +115,7 @@ namespace LaserGRBL
 
 			return true;
 		}
+
+
 	}
 }

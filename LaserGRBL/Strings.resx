@@ -436,4 +436,57 @@ If you need help click on "?" button.</value>
   <data name="BoxMachineSizeOutOfRangeTitle" xml:space="preserve">
     <value>Warning</value>
   </data>
+  <data name="PreviewChangesRequiresRestart" xml:space="preserve">
+    <value>Restart is required to apply preview changes. Restart now?</value>
+  </data>
+  <data name="IconsChangesRequiresRestart" xml:space="preserve">
+    <value>Restart is required to apply icons changes. Restart now?</value>
+  </data>
+  <data name="MdiIconCaption" xml:space="preserve">
+    <value>MDI Icon code</value>
+  </data>
+  <data name="DBOIssueSuggestGDI" xml:space="preserve">
+    <value>It seems that your computer does not support software rendering.
+Do you want to restart LaserGRBL and switch to legacy mode?</value>
+  </data>
+  <data name="FBOIssueSuggestDBO" xml:space="preserve">
+    <value>It seems that your computer does not support hardware acceleration.
+Do you want to restart LaserGRBL and switch to software rendering?</value>
+  </data>
+  <data name="AlreadyLoading" xml:space="preserve">
+    <value>A file is already loading, please wait...</value>
+  </data>
+  <data name="ClearDrawing" xml:space="preserve">
+    <value>Clear drawing...</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="PrepareDrawing" xml:space="preserve">
+    <value>Prepare drawing...</value>
+  </data>
+  <data name="TipsBasicUsage" xml:space="preserve">
+    <value>Basic usage</value>
+  </data>
+  <data name="TipsJog" xml:space="preserve">
+    <value>JOG:  Double click in any point (or double tap)</value>
+  </data>
+  <data name="TipsKeyboardShortcuts" xml:space="preserve">
+    <value>Keyboard Shortcuts</value>
+  </data>
+  <data name="TipsPan" xml:space="preserve">
+    <value>PAN:  Click and drag (or touch and drag)</value>
+  </data>
+  <data name="TipsZoom" xml:space="preserve">
+    <value>ZOOM: Use mouse wheel (or two-finger gesture)</value>
+  </data>
+  <data name="TipsZoomAuto" xml:space="preserve">
+    <value>Zoom Auto (100%)</value>
+  </data>
+  <data name="TipsZoomIn" xml:space="preserve">
+    <value>Zoom In   (+10%)</value>
+  </data>
+  <data name="TipsZoomOut" xml:space="preserve">
+    <value>Zoom Out  (-10%)</value>
+  </data>
 </root>

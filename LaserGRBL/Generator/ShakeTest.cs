@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LaserGRBL.Icons;
+using LaserGRBL.UserControls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -16,13 +18,18 @@ namespace LaserGRBL.Generator
 		public ShakeTest(GrblCore core)
 		{
 			InitializeComponent();
-			mCore = core;
+            ThemeMgr.SetTheme(this, true);
+            BackColor = ColorScheme.FormBackColor;
+            ForeColor = ColorScheme.FormForeColor;
+            IconsMgr.PrepareButton(BtnCreate, "mdi-checkbox-marked");
+            IconsMgr.PrepareButton(BtnCancel, "mdi-close-box");
+            mCore = core;
 		}
 
-		public static void CreateAndShowDialog(Form parent, GrblCore core)
+		public static void CreateAndShowDialog(GrblCore core)
 		{
 			using (ShakeTest f = new ShakeTest(core))
-				f.ShowDialog(parent);
+				f.ShowDialog(FormsHelper.MainForm);
 		}
 
 		private void BtnCreate_Click(object sender, EventArgs e)

@@ -5,11 +5,6 @@
 // You should have received a copy of the GPLv3 General Public License  along with this program; if not, write to the Free Software  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,  USA. using System;
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -19,7 +14,7 @@ namespace LaserGRBL
 	public partial class ExceptionManager : Form
 	{
 		public static GrblCore Core;
-
+		public static Form ParentMain;
 		public bool UserClose = false;
 
 		private ExceptionManager()
@@ -43,39 +38,55 @@ namespace LaserGRBL
 			CreateAndShow(e?.ExceptionObject as Exception, false, false);
 		}
 
-		public static void CreateAndShow(Exception ex, bool cancontinue, bool manual = true)
+		public static void OnHandledException(Exception ex, bool cancontinue)
 		{
-			bool close;
-			using (ExceptionManager f = new ExceptionManager())
+			CreateAndShow(ex, cancontinue, true);
+		}
+
+		public delegate void CreateAndShowDlg(Exception ex, bool cancontinue, bool manual);
+		public static void CreateAndShow(Exception ex, bool cancontinue, bool manual)
+		{
+			if (Program.DesignTime)
+				return;
+
+			if (ParentMain != null && ParentMain.InvokeRequired)
 			{
-				StringBuilder sb = new StringBuilder();
-
-				try
-				{
-					sb.AppendFormat("LaserGrbl v{0}", Program.CurrentVersion);
-					sb.AppendLine();
-					sb.AppendFormat("{0} v{1}", Core?.Type, GrblCore.Configuration?.GrblVersion);
-					sb.AppendLine();
-					sb.AppendFormat("Wrapper: {0}", Settings.GetObject("ComWrapper Protocol", ComWrapper.WrapperType.UsbSerial));
-					sb.AppendLine();
-					sb.AppendFormat("{0} ({1})", Tools.OSHelper.GetOSInfo()?.Replace("|", ", "), Tools.OSHelper.GetBitFlag());
-					sb.AppendLine();
-					sb.AppendFormat("CLR: {0}", Tools.OSHelper.GetClrInfo()); 
-					sb.AppendLine();
-					sb.AppendLine();
-				}
-				catch { }
-
-				AppendExceptionData(sb, ex);
-
-				f.TbExMessage.Text = sb.ToString();
-				f.BtnContinue.Visible = cancontinue;
-				f.ShowDialog();
-				close = f.UserClose;
+				ParentMain.Invoke(new CreateAndShowDlg(CreateAndShow), ex, cancontinue, manual);
 			}
+			else
+			{
+				bool close;
+				using (ExceptionManager f = new ExceptionManager())
+				{
+					StringBuilder sb = new StringBuilder();
 
-			if (close)
-				Application.Exit();
+					try
+					{
+						sb.AppendFormat("LaserGrbl v{0}", Program.CurrentVersion);
+						sb.AppendLine();
+						sb.AppendFormat("{0} v{1}", Core?.Type, GrblCore.Configuration?.GrblVersion);
+						sb.AppendLine();
+						sb.AppendFormat("Wrapper: {0}", Settings.GetObject("ComWrapper Protocol", ComWrapper.WrapperType.UsbSerial));
+						sb.AppendLine();
+						sb.AppendFormat("{0} ({1})", Tools.OSHelper.GetOSInfo()?.Replace("|", ", "), Tools.OSHelper.GetBitFlag());
+						sb.AppendLine();
+						sb.AppendFormat("CLR: {0}", Tools.OSHelper.GetClrInfo());
+						sb.AppendLine();
+						sb.AppendLine();
+					}
+					catch { }
+
+					AppendExceptionData(sb, ex);
+
+					f.TbExMessage.Text = sb.ToString();
+					f.BtnContinue.Visible = cancontinue;
+					f.ShowDialog(ParentMain);
+					close = f.UserClose;
+				}
+
+				if (close)
+					Application.Exit();
+			}
 		}
 
 		private void BtnAbort_Click(object sender, EventArgs e)
@@ -138,5 +149,15 @@ namespace LaserGRBL
 
 		private void LblFormDescription_LinkClicked(object sender, LinkClickedEventArgs e)
 		{Tools.Utils.OpenLink(e.LinkText);}
+
+		private void ExceptionManager_Load(object sender, EventArgs e)
+		{
+			BringToFront();
+		}
+
+		private void BtnClipboardCopy_Click(object sender, EventArgs e)
+		{
+			Clipboard.SetText(TbExMessage.Text);
+		}
 	}
 }

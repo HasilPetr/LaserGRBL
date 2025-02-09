@@ -8,20 +8,37 @@ using System;
 
 namespace LaserGRBL
 {
-    /// <summary>
-    /// Description of Settings.
-    /// </summary>
-    public static class Settings
-    {
-        private static System.Threading.Timer Timer = new System.Threading.Timer(OnTimerExpire, null, System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
-        private static System.Collections.Generic.Dictionary<string, object> dic;
-        private static string LastCause = null;
-        private static string LockString = "---- SETTING LOCK ----";
+	/// <summary>
+	/// Description of Settings.
+	/// </summary>
+	public static class Settings
+	{
+		private static System.Threading.Timer Timer = new System.Threading.Timer(OnTimerExpire, null, System.Threading.Timeout.Infinite, System.Threading.Timeout.Infinite);
+		private static System.Collections.Generic.Dictionary<string, object> dic;
+		private static string LastCause = null;
+		private static string LockString = "---- SETTING LOCK ----";
 
-        public static bool IsNewFile { get; private set; } = false;
-        public static Version PrevVersion { get; private set; } = new Version(0, 0, 0);
+		public static bool IsNewFile { get; private set; } = false;
+		public static Version PrevVersion { get; private set; } = new Version(0, 0, 0);
 
-        static string filename
+		public enum GraphicMode
+		{
+			AUTO = 0,
+			GDI = 1,
+			DIB = 2,
+			FBO = 3,
+		}
+
+		public static GraphicMode ForcedGraphicMode { get; set; } = GraphicMode.AUTO;							// forced by command line
+		public static GraphicMode ConfiguredGraphicMode                                                         // stored in settings
+		{
+			get { return (GraphicMode)GetObject("ConfiguredGraphicMode", 0); }
+			set { SetObject("ConfiguredGraphicMode", (int)value); }
+		}
+		public static GraphicMode RequestedGraphicMode => ForcedGraphicMode != GraphicMode.AUTO ? ForcedGraphicMode : ConfiguredGraphicMode ;
+		public static GraphicMode CurrentGraphicMode { get; set; } = GraphicMode.AUTO;							// actually in use
+
+		static string filename
         {
             get
             {
@@ -61,7 +78,6 @@ namespace LaserGRBL
             SetObject("Current LaserGRBL Version", Program.CurrentVersion);
         }
 
-
         public static T GetObject<T>(string key, T defval)
         {
             try
@@ -86,18 +102,17 @@ namespace LaserGRBL
             return rv;
         }
 
-        public static void SetObject(string key, object value)
+        public static void SetObject(string key, object value, bool forcesave = false) //use force-save if calling with a complex object that not support Equal comparison
         {
             if (ExistObject(key))
             {
-
                 bool isdifferent = !Equals(dic[key], value);
 
                 if (value is object[] && dic[key] is object[])
                     isdifferent = !ArraysEqual((object[])dic[key], (object[])value);
 
                 dic[key] = value;
-                if (isdifferent)
+                if (isdifferent || forcesave)
                     TriggerSave(key);
             }
             else

@@ -31,17 +31,17 @@
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SettingsForm));
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-			this.BtnCancel = new System.Windows.Forms.Button();
-			this.BtnSave = new System.Windows.Forms.Button();
+			this.BtnCancel = new LaserGRBL.UserControls.GrblButton();
+			this.BtnSave = new LaserGRBL.UserControls.GrblButton();
 			this.MainTabPage = new System.Windows.Forms.TabControl();
 			this.TpHardware = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-			this.CBCore = new System.Windows.Forms.ComboBox();
-			this.CbThreadingMode = new System.Windows.Forms.ComboBox();
+			this.CBCore = new LaserGRBL.UserControls.FlatComboBox();
+			this.CbThreadingMode = new LaserGRBL.UserControls.FlatComboBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.CBStreamingMode = new System.Windows.Forms.ComboBox();
+			this.CBStreamingMode = new LaserGRBL.UserControls.FlatComboBox();
 			this.BtnStreamingMode = new LaserGRBL.UserControls.ImageButton();
-			this.CBProtocol = new System.Windows.Forms.ComboBox();
+			this.CBProtocol = new LaserGRBL.UserControls.FlatComboBox();
 			this.label3 = new System.Windows.Forms.Label();
 			this.BtnProtocol = new LaserGRBL.UserControls.ImageButton();
 			this.label6 = new System.Windows.Forms.Label();
@@ -90,14 +90,14 @@
 			this.CbAutoCooling = new System.Windows.Forms.CheckBox();
 			this.tableLayoutPanel7 = new System.Windows.Forms.TableLayoutPanel();
 			this.label15 = new System.Windows.Forms.Label();
-			this.CbOnMin = new System.Windows.Forms.ComboBox();
-			this.CbOnSec = new System.Windows.Forms.ComboBox();
+			this.CbOnMin = new LaserGRBL.UserControls.FlatComboBox();
+			this.CbOnSec = new LaserGRBL.UserControls.FlatComboBox();
 			this.label14 = new System.Windows.Forms.Label();
 			this.label16 = new System.Windows.Forms.Label();
 			this.tableLayoutPanel8 = new System.Windows.Forms.TableLayoutPanel();
 			this.label17 = new System.Windows.Forms.Label();
-			this.CbOffMin = new System.Windows.Forms.ComboBox();
-			this.CbOffSec = new System.Windows.Forms.ComboBox();
+			this.CbOffMin = new LaserGRBL.UserControls.FlatComboBox();
+			this.CbOffSec = new LaserGRBL.UserControls.FlatComboBox();
 			this.label18 = new System.Windows.Forms.Label();
 			this.label19 = new System.Windows.Forms.Label();
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -106,11 +106,11 @@
 			this.TpGCodeSettings = new System.Windows.Forms.TabPage();
 			this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
 			this.LblHeader = new System.Windows.Forms.Label();
-			this.groupBox1 = new System.Windows.Forms.GroupBox();
+			this.groupBox1 = new LaserGRBL.UserControls.GrblGroupBox();
 			this.TBHeader = new System.Windows.Forms.TextBox();
-			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.groupBox2 = new LaserGRBL.UserControls.GrblGroupBox();
 			this.TBFooter = new System.Windows.Forms.TextBox();
-			this.groupBox3 = new System.Windows.Forms.GroupBox();
+			this.groupBox3 = new LaserGRBL.UserControls.GrblGroupBox();
 			this.TBPasses = new System.Windows.Forms.TextBox();
 			this.LblFooter = new System.Windows.Forms.Label();
 			this.LblPasses = new System.Windows.Forms.Label();
@@ -132,27 +132,27 @@
 			this.label24 = new System.Windows.Forms.Label();
 			this.tableLayoutPanel11 = new System.Windows.Forms.TableLayoutPanel();
 			this.label26 = new System.Windows.Forms.Label();
-			this.changeWarBtn = new System.Windows.Forms.Button();
+			this.changeWarBtn = new LaserGRBL.UserControls.GrblButton();
 			this.label27 = new System.Windows.Forms.Label();
 			this.warningSoundLabel = new System.Windows.Forms.Label();
 			this.tableLayoutPanel12 = new System.Windows.Forms.TableLayoutPanel();
 			this.label29 = new System.Windows.Forms.Label();
-			this.changeFatBtn = new System.Windows.Forms.Button();
+			this.changeFatBtn = new LaserGRBL.UserControls.GrblButton();
 			this.label30 = new System.Windows.Forms.Label();
 			this.fatalSoundLabel = new System.Windows.Forms.Label();
 			this.tableLayoutPanel14 = new System.Windows.Forms.TableLayoutPanel();
 			this.label34 = new System.Windows.Forms.Label();
-			this.changeConBtn = new System.Windows.Forms.Button();
+			this.changeConBtn = new LaserGRBL.UserControls.GrblButton();
 			this.label35 = new System.Windows.Forms.Label();
 			this.connectSoundLabel = new System.Windows.Forms.Label();
 			this.tableLayoutPanel15 = new System.Windows.Forms.TableLayoutPanel();
 			this.label37 = new System.Windows.Forms.Label();
-			this.changeDconBtn = new System.Windows.Forms.Button();
+			this.changeDconBtn = new LaserGRBL.UserControls.GrblButton();
 			this.label38 = new System.Windows.Forms.Label();
 			this.disconnectSoundLabel = new System.Windows.Forms.Label();
 			this.tableLayoutPanel13 = new System.Windows.Forms.TableLayoutPanel();
 			this.LblSuccessSound = new System.Windows.Forms.Label();
-			this.changeSucBtn = new System.Windows.Forms.Button();
+			this.changeSucBtn = new LaserGRBL.UserControls.GrblButton();
 			this.label25 = new System.Windows.Forms.Label();
 			this.successSoundLabel = new System.Windows.Forms.Label();
 			this.label32 = new System.Windows.Forms.Label();
@@ -164,18 +164,23 @@
 			this.label31 = new System.Windows.Forms.Label();
 			this.label33 = new System.Windows.Forms.Label();
 			this.TxtNotification = new System.Windows.Forms.TextBox();
-			this.BtnTestNotification = new System.Windows.Forms.Button();
+			this.BtnTestNotification = new LaserGRBL.UserControls.GrblButton();
 			this.tableLayoutPanel19 = new System.Windows.Forms.TableLayoutPanel();
 			this.UdTelegramNotificationThreshold = new System.Windows.Forms.NumericUpDown();
 			this.label45 = new System.Windows.Forms.Label();
 			this.label42 = new System.Windows.Forms.Label();
-			this.SoundBrowserDialog = new System.Windows.Forms.OpenFileDialog();
 			this.TpOptions = new System.Windows.Forms.TabPage();
 			this.Tlp = new System.Windows.Forms.TableLayoutPanel();
+			this.CBGraphicMode = new LaserGRBL.UserControls.FlatComboBox();
+			this.BtnRenderingMode = new LaserGRBL.UserControls.ImageButton();
 			this.CbDisableSafetyCD = new System.Windows.Forms.CheckBox();
 			this.label47 = new System.Windows.Forms.Label();
 			this.CbQuietSafetyCB = new System.Windows.Forms.CheckBox();
 			this.label48 = new System.Windows.Forms.Label();
+			this.CbLegacyIcons = new System.Windows.Forms.CheckBox();
+			this.label49 = new System.Windows.Forms.Label();
+			this.label50 = new System.Windows.Forms.Label();
+			this.SoundBrowserDialog = new System.Windows.Forms.OpenFileDialog();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.MainTabPage.SuspendLayout();
@@ -289,15 +294,19 @@
 			// 
 			// CBCore
 			// 
+			this.CBCore.BackColor = System.Drawing.Color.White;
 			resources.ApplyResources(this.CBCore, "CBCore");
 			this.CBCore.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.CBCore.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.CBCore.FormattingEnabled = true;
 			this.CBCore.Name = "CBCore";
 			// 
 			// CbThreadingMode
 			// 
+			this.CbThreadingMode.BackColor = System.Drawing.Color.White;
 			resources.ApplyResources(this.CbThreadingMode, "CbThreadingMode");
 			this.CbThreadingMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.CbThreadingMode.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.CbThreadingMode.FormattingEnabled = true;
 			this.CbThreadingMode.Name = "CbThreadingMode";
 			// 
@@ -308,8 +317,10 @@
 			// 
 			// CBStreamingMode
 			// 
+			this.CBStreamingMode.BackColor = System.Drawing.Color.White;
 			resources.ApplyResources(this.CBStreamingMode, "CBStreamingMode");
 			this.CBStreamingMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.CBStreamingMode.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.CBStreamingMode.FormattingEnabled = true;
 			this.CBStreamingMode.Name = "CBStreamingMode";
 			// 
@@ -318,18 +329,21 @@
 			this.BtnStreamingMode.AltImage = null;
 			this.BtnStreamingMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
 			this.BtnStreamingMode.Caption = null;
-			this.BtnStreamingMode.Coloration = System.Drawing.Color.Empty;
+			this.BtnStreamingMode.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.BtnStreamingMode.Image = ((System.Drawing.Image)(resources.GetObject("BtnStreamingMode.Image")));
 			resources.ApplyResources(this.BtnStreamingMode, "BtnStreamingMode");
 			this.BtnStreamingMode.Name = "BtnStreamingMode";
+			this.BtnStreamingMode.RoundedBorders = false;
 			this.BtnStreamingMode.SizingMode = LaserGRBL.UserControls.ImageButton.SizingModes.FixedSize;
 			this.BtnStreamingMode.UseAltImage = false;
 			this.BtnStreamingMode.Click += new System.EventHandler(this.BtnStreamingMode_Click);
 			// 
 			// CBProtocol
 			// 
+			this.CBProtocol.BackColor = System.Drawing.Color.White;
 			resources.ApplyResources(this.CBProtocol, "CBProtocol");
 			this.CBProtocol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.CBProtocol.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.CBProtocol.FormattingEnabled = true;
 			this.CBProtocol.Name = "CBProtocol";
 			// 
@@ -343,10 +357,11 @@
 			this.BtnProtocol.AltImage = null;
 			this.BtnProtocol.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
 			this.BtnProtocol.Caption = null;
-			this.BtnProtocol.Coloration = System.Drawing.Color.Empty;
+			this.BtnProtocol.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.BtnProtocol.Image = ((System.Drawing.Image)(resources.GetObject("BtnProtocol.Image")));
 			resources.ApplyResources(this.BtnProtocol, "BtnProtocol");
 			this.BtnProtocol.Name = "BtnProtocol";
+			this.BtnProtocol.RoundedBorders = false;
 			this.BtnProtocol.SizingMode = LaserGRBL.UserControls.ImageButton.SizingModes.FixedSize;
 			this.BtnProtocol.UseAltImage = false;
 			this.BtnProtocol.Click += new System.EventHandler(this.BtnProtocol_Click);
@@ -361,10 +376,11 @@
 			this.BtnThreadingModel.AltImage = null;
 			this.BtnThreadingModel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
 			this.BtnThreadingModel.Caption = null;
-			this.BtnThreadingModel.Coloration = System.Drawing.Color.Empty;
+			this.BtnThreadingModel.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.BtnThreadingModel.Image = ((System.Drawing.Image)(resources.GetObject("BtnThreadingModel.Image")));
 			resources.ApplyResources(this.BtnThreadingModel, "BtnThreadingModel");
 			this.BtnThreadingModel.Name = "BtnThreadingModel";
+			this.BtnThreadingModel.RoundedBorders = false;
 			this.BtnThreadingModel.SizingMode = LaserGRBL.UserControls.ImageButton.SizingModes.FixedSize;
 			this.BtnThreadingModel.UseAltImage = false;
 			this.BtnThreadingModel.Click += new System.EventHandler(this.BtnThreadingModel_Click);
@@ -412,10 +428,11 @@
 			this.BtnFType.AltImage = null;
 			this.BtnFType.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
 			this.BtnFType.Caption = null;
-			this.BtnFType.Coloration = System.Drawing.Color.Empty;
+			this.BtnFType.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.BtnFType.Image = ((System.Drawing.Image)(resources.GetObject("BtnFType.Image")));
 			resources.ApplyResources(this.BtnFType, "BtnFType");
 			this.BtnFType.Name = "BtnFType";
+			this.BtnFType.RoundedBorders = false;
 			this.BtnFType.SizingMode = LaserGRBL.UserControls.ImageButton.SizingModes.FixedSize;
 			this.BtnFType.UseAltImage = false;
 			this.BtnFType.Click += new System.EventHandler(this.BtnFType_Click);
@@ -481,10 +498,11 @@
 			this.BtnModulationInfo.AltImage = null;
 			this.BtnModulationInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
 			this.BtnModulationInfo.Caption = null;
-			this.BtnModulationInfo.Coloration = System.Drawing.Color.Empty;
+			this.BtnModulationInfo.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.BtnModulationInfo.Image = ((System.Drawing.Image)(resources.GetObject("BtnModulationInfo.Image")));
 			resources.ApplyResources(this.BtnModulationInfo, "BtnModulationInfo");
 			this.BtnModulationInfo.Name = "BtnModulationInfo";
+			this.BtnModulationInfo.RoundedBorders = false;
 			this.BtnModulationInfo.SizingMode = LaserGRBL.UserControls.ImageButton.SizingModes.FixedSize;
 			this.BtnModulationInfo.UseAltImage = false;
 			this.BtnModulationInfo.Click += new System.EventHandler(this.BtnModulationInfo_Click);
@@ -553,10 +571,11 @@
 			this.imageButton1.AltImage = null;
 			this.imageButton1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
 			this.imageButton1.Caption = null;
-			this.imageButton1.Coloration = System.Drawing.Color.Empty;
+			this.imageButton1.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.imageButton1.Image = ((System.Drawing.Image)(resources.GetObject("imageButton1.Image")));
 			resources.ApplyResources(this.imageButton1, "imageButton1");
 			this.imageButton1.Name = "imageButton1";
+			this.imageButton1.RoundedBorders = false;
 			this.imageButton1.SizingMode = LaserGRBL.UserControls.ImageButton.SizingModes.FixedSize;
 			this.imageButton1.UseAltImage = false;
 			// 
@@ -1125,10 +1144,11 @@
 			this.BtnTelegNoteInfo.AltImage = null;
 			this.BtnTelegNoteInfo.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
 			this.BtnTelegNoteInfo.Caption = null;
-			this.BtnTelegNoteInfo.Coloration = System.Drawing.Color.Empty;
+			this.BtnTelegNoteInfo.Cursor = System.Windows.Forms.Cursors.Hand;
 			this.BtnTelegNoteInfo.Image = ((System.Drawing.Image)(resources.GetObject("BtnTelegNoteInfo.Image")));
 			resources.ApplyResources(this.BtnTelegNoteInfo, "BtnTelegNoteInfo");
 			this.BtnTelegNoteInfo.Name = "BtnTelegNoteInfo";
+			this.BtnTelegNoteInfo.RoundedBorders = false;
 			this.BtnTelegNoteInfo.SizingMode = LaserGRBL.UserControls.ImageButton.SizingModes.FixedSize;
 			this.BtnTelegNoteInfo.UseAltImage = false;
 			this.BtnTelegNoteInfo.Click += new System.EventHandler(this.BtnTelegNoteInfo_Click);
@@ -1185,10 +1205,6 @@
 			resources.ApplyResources(this.label42, "label42");
 			this.label42.Name = "label42";
 			// 
-			// SoundBrowserDialog
-			// 
-			resources.ApplyResources(this.SoundBrowserDialog, "SoundBrowserDialog");
-			// 
 			// TpOptions
 			// 
 			this.TpOptions.Controls.Add(this.Tlp);
@@ -1199,11 +1215,39 @@
 			// Tlp
 			// 
 			resources.ApplyResources(this.Tlp, "Tlp");
+			this.Tlp.Controls.Add(this.CBGraphicMode, 1, 3);
+			this.Tlp.Controls.Add(this.BtnRenderingMode, 0, 3);
 			this.Tlp.Controls.Add(this.CbDisableSafetyCD, 1, 1);
 			this.Tlp.Controls.Add(this.label47, 2, 1);
 			this.Tlp.Controls.Add(this.CbQuietSafetyCB, 1, 0);
 			this.Tlp.Controls.Add(this.label48, 2, 0);
+			this.Tlp.Controls.Add(this.CbLegacyIcons, 1, 2);
+			this.Tlp.Controls.Add(this.label49, 2, 2);
+			this.Tlp.Controls.Add(this.label50, 2, 3);
 			this.Tlp.Name = "Tlp";
+			// 
+			// CBGraphicMode
+			// 
+			this.CBGraphicMode.BackColor = System.Drawing.Color.White;
+			resources.ApplyResources(this.CBGraphicMode, "CBGraphicMode");
+			this.CBGraphicMode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.CBGraphicMode.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.CBGraphicMode.FormattingEnabled = true;
+			this.CBGraphicMode.Name = "CBGraphicMode";
+			// 
+			// BtnRenderingMode
+			// 
+			this.BtnRenderingMode.AltImage = null;
+			this.BtnRenderingMode.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+			this.BtnRenderingMode.Caption = null;
+			this.BtnRenderingMode.Cursor = System.Windows.Forms.Cursors.Hand;
+			this.BtnRenderingMode.Image = ((System.Drawing.Image)(resources.GetObject("BtnRenderingMode.Image")));
+			resources.ApplyResources(this.BtnRenderingMode, "BtnRenderingMode");
+			this.BtnRenderingMode.Name = "BtnRenderingMode";
+			this.BtnRenderingMode.RoundedBorders = false;
+			this.BtnRenderingMode.SizingMode = LaserGRBL.UserControls.ImageButton.SizingModes.FixedSize;
+			this.BtnRenderingMode.UseAltImage = false;
+			this.BtnRenderingMode.Click += new System.EventHandler(this.BtnRenderingMode_Click);
 			// 
 			// CbDisableSafetyCD
 			// 
@@ -1226,6 +1270,26 @@
 			// 
 			resources.ApplyResources(this.label48, "label48");
 			this.label48.Name = "label48";
+			// 
+			// CbLegacyIcons
+			// 
+			resources.ApplyResources(this.CbLegacyIcons, "CbLegacyIcons");
+			this.CbLegacyIcons.Name = "CbLegacyIcons";
+			this.CbLegacyIcons.UseVisualStyleBackColor = true;
+			// 
+			// label49
+			// 
+			resources.ApplyResources(this.label49, "label49");
+			this.label49.Name = "label49";
+			// 
+			// label50
+			// 
+			resources.ApplyResources(this.label50, "label50");
+			this.label50.Name = "label50";
+			// 
+			// SoundBrowserDialog
+			// 
+			resources.ApplyResources(this.SoundBrowserDialog, "SoundBrowserDialog");
 			// 
 			// SettingsForm
 			// 
@@ -1308,21 +1372,21 @@
 
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-		private System.Windows.Forms.Button BtnCancel;
-		private System.Windows.Forms.Button BtnSave;
+		private LaserGRBL.UserControls.GrblButton BtnCancel;
+		private LaserGRBL.UserControls.GrblButton BtnSave;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
 		private System.Windows.Forms.CheckBox CBSupportPWM;
 		private System.Windows.Forms.Label label1;
 		private UserControls.ImageButton BtnModulationInfo;
-		private System.Windows.Forms.ComboBox CBProtocol;
+		private LaserGRBL.UserControls.FlatComboBox CBProtocol;
 		private System.Windows.Forms.Label label3;
 		private UserControls.ImageButton BtnProtocol;
 		private System.Windows.Forms.Label label4;
-		private System.Windows.Forms.ComboBox CBStreamingMode;
+		private LaserGRBL.UserControls.FlatComboBox CBStreamingMode;
 		private UserControls.ImageButton BtnStreamingMode;
 		private System.Windows.Forms.CheckBox CbUnidirectional;
 		private System.Windows.Forms.Label label5;
-		private System.Windows.Forms.ComboBox CbThreadingMode;
+		private LaserGRBL.UserControls.FlatComboBox CbThreadingMode;
 		private System.Windows.Forms.Label label6;
 		private UserControls.ImageButton BtnThreadingModel;
 		private System.Windows.Forms.CheckBox CbIssueDetector;
@@ -1335,7 +1399,7 @@
 		private System.Windows.Forms.TabPage TpHardware;
 		private System.Windows.Forms.TabPage TpRasterImport;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
-        private System.Windows.Forms.ComboBox CBCore;
+        private LaserGRBL.UserControls.FlatComboBox CBCore;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TabPage TpJogControl;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel5;
@@ -1349,15 +1413,15 @@
 		private System.Windows.Forms.CheckBox CbAutoCooling;
 		private System.Windows.Forms.Label label13;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
-		private System.Windows.Forms.ComboBox CbOnMin;
-		private System.Windows.Forms.ComboBox CbOnSec;
+		private LaserGRBL.UserControls.FlatComboBox CbOnMin;
+		private LaserGRBL.UserControls.FlatComboBox CbOnSec;
 		private System.Windows.Forms.Label label14;
 		private System.Windows.Forms.Label label15;
 		private System.Windows.Forms.Label label16;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
 		private System.Windows.Forms.Label label17;
-		private System.Windows.Forms.ComboBox CbOffMin;
-		private System.Windows.Forms.ComboBox CbOffSec;
+		private LaserGRBL.UserControls.FlatComboBox CbOffMin;
+		private LaserGRBL.UserControls.FlatComboBox CbOffSec;
 		private System.Windows.Forms.Label label18;
 		private System.Windows.Forms.Label label19;
 		private System.Windows.Forms.Label label20;
@@ -1366,13 +1430,13 @@
 		private System.Windows.Forms.TabPage TpGCodeSettings;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel9;
 		private System.Windows.Forms.Label LblHeader;
-		private System.Windows.Forms.GroupBox groupBox1;
+		private LaserGRBL.UserControls.GrblGroupBox groupBox1;
 		private System.Windows.Forms.TextBox TBHeader;
 		private System.Windows.Forms.Label LblPasses;
 		private System.Windows.Forms.Label LblFooter;
-		private System.Windows.Forms.GroupBox groupBox2;
+		private LaserGRBL.UserControls.GrblGroupBox groupBox2;
 		private System.Windows.Forms.TextBox TBFooter;
-		private System.Windows.Forms.GroupBox groupBox3;
+		private LaserGRBL.UserControls.GrblGroupBox groupBox3;
 		private System.Windows.Forms.TextBox TBPasses;
         private UserControls.ImageButton BtnFType;
         private System.Windows.Forms.TabPage TpSoundSettings;
@@ -1381,27 +1445,27 @@
         private System.Windows.Forms.Label label24;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel13;
         private System.Windows.Forms.Label LblSuccessSound;
-        private System.Windows.Forms.Button changeSucBtn;
+        private LaserGRBL.UserControls.GrblButton changeSucBtn;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.Label successSoundLabel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel11;
         private System.Windows.Forms.Label label26;
-        private System.Windows.Forms.Button changeWarBtn;
+        private LaserGRBL.UserControls.GrblButton changeWarBtn;
         private System.Windows.Forms.Label label27;
         private System.Windows.Forms.Label warningSoundLabel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel12;
         private System.Windows.Forms.Label label29;
-        private System.Windows.Forms.Button changeFatBtn;
+        private LaserGRBL.UserControls.GrblButton changeFatBtn;
         private System.Windows.Forms.Label label30;
         private System.Windows.Forms.Label fatalSoundLabel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel14;
         private System.Windows.Forms.Label label34;
-        private System.Windows.Forms.Button changeConBtn;
+        private LaserGRBL.UserControls.GrblButton changeConBtn;
         private System.Windows.Forms.Label label35;
         private System.Windows.Forms.Label connectSoundLabel;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel15;
         private System.Windows.Forms.Label label37;
-        private System.Windows.Forms.Button changeDconBtn;
+        private LaserGRBL.UserControls.GrblButton changeDconBtn;
         private System.Windows.Forms.Label label38;
         private System.Windows.Forms.Label disconnectSoundLabel;
         private System.Windows.Forms.Label label32;
@@ -1434,7 +1498,7 @@
 		private System.Windows.Forms.Label label33;
 		private System.Windows.Forms.TextBox TxtNotification;
 		private System.Windows.Forms.Label label42;
-		private System.Windows.Forms.Button BtnTestNotification;
+		private LaserGRBL.UserControls.GrblButton BtnTestNotification;
 		private UserControls.ImageButton BtnTelegNoteInfo;
 		private System.Windows.Forms.TabPage TpVectorImport;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel18;
@@ -1453,5 +1517,10 @@
 		private System.Windows.Forms.Label label47;
 		private System.Windows.Forms.CheckBox CbQuietSafetyCB;
 		private System.Windows.Forms.Label label48;
+        private System.Windows.Forms.CheckBox CbLegacyIcons;
+		private UserControls.FlatComboBox CBGraphicMode;
+		private UserControls.ImageButton BtnRenderingMode;
+		private System.Windows.Forms.Label label49;
+		private System.Windows.Forms.Label label50;
 	}
 }

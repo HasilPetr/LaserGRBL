@@ -83,8 +83,9 @@
     <BaseIntermediateOutputPath>obj\</BaseIntermediateOutputPath>
     <StartAction>Project</StartAction>
   </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup />
+  <PropertyGroup>
+    <ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>
+  </PropertyGroup>
   <PropertyGroup>
     <StartupObject>LaserGRBL.Program</StartupObject>
   </PropertyGroup>
@@ -132,6 +133,7 @@
     <Compile Include="ComWrapper\MySerial\SerialSignal.cs" />
     <Compile Include="ComWrapper\MySerial\StopBits.cs" />
     <Compile Include="ComWrapper\MySerial\WinSerialStream.cs" />
+    <Compile Include="ComWrapper\RJCPSerial.cs" />
     <Compile Include="ComWrapper\UsbSerial2.cs" />
     <Compile Include="Generator\CuttingTest.cs">
       <SubType>Form</SubType>
@@ -152,6 +154,9 @@
       <DependentUpon>ShakeTest.cs</DependentUpon>
     </Compile>
     <Compile Include="Hershey\Hershey.cs" />
+    <Compile Include="Icons\IIconsLoader.cs" />
+    <Compile Include="Icons\LegacyIcons.cs" />
+    <Compile Include="Icons\IconsMgr.cs" />
     <Compile Include="LaserLifeEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -170,6 +175,85 @@
     <Compile Include="LaserUsage.Designer.cs">
       <DependentUpon>LaserUsage.cs</DependentUpon>
     </Compile>
+    <Compile Include="Obj3D\ColorHelper.cs" />
+    <Compile Include="Obj3D\GlColorHelper.cs" />
+    <Compile Include="ComWrapper\RJCP\Datastructures\CircularBuffer.cs" />
+    <Compile Include="ComWrapper\RJCP\Datastructures\ReusableList.cs" />
+    <Compile Include="ComWrapper\RJCP\Datastructures\TimerExpiry.cs" />
+    <Compile Include="ComWrapper\RJCP\GlobalSuppressions.cs" />
+    <Compile Include="ComWrapper\RJCP\HandShake.cs" />
+    <Compile Include="ComWrapper\RJCP\InternalApplicationException.cs" />
+    <Compile Include="ComWrapper\RJCP\ISerialPortStream.cs" />
+    <Compile Include="ComWrapper\RJCP\LocalAsyncResult.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\INativeSerial.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\ISerialBufferSerialData.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\ISerialBufferStreamData.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Platform.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\ReadToCache.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\SerialBuffer.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\UnixNativeSerial.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Unix\INativeSerialDll.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Unix\SafeNativeMethods.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Unix\SafeSerialHandle.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Unix\SerialReadWriteEvent.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Unix\SerialUnix.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Unix\SysErrNo.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Unix\UnsafeNativeMethods.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Unix\WaitForModemEvent.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\CfgMgr32.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\CfgMgr32.Types.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\CommErrorEventArgs.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\CommEventArgs.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\CommModemStatus.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\CommOverlappedIo.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\CommProperties.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\CommState.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\DtrControl.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\Kernel32.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\Kernel32.Types.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\Marshalling.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\RtsControl.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\Windows\WinError.cs" />
+    <Compile Include="ComWrapper\RJCP\Native\WinNativeSerial.cs" />
+    <Compile Include="ComWrapper\RJCP\Parity.cs" />
+    <Compile Include="ComWrapper\RJCP\PortDescription.cs" />
+    <Compile Include="ComWrapper\RJCP\SerialData.cs" />
+    <Compile Include="ComWrapper\RJCP\SerialDataEventArgs.cs" />
+    <Compile Include="ComWrapper\RJCP\SerialError.cs" />
+    <Compile Include="ComWrapper\RJCP\SerialErrorReceivedEventArgs.cs" />
+    <Compile Include="ComWrapper\RJCP\SerialPinChange.cs" />
+    <Compile Include="ComWrapper\RJCP\SerialPinChangedEventArgs.cs" />
+    <Compile Include="ComWrapper\RJCP\SerialPortStream.cs" />
+    <Compile Include="ComWrapper\RJCP\StopBits.cs" />
+    <Compile Include="ComWrapper\RJCP\System\EntryPointNotFoundException.cs" />
+    <Compile Include="ComWrapper\RJCP\Trace\LineSplitter.cs" />
+    <Compile Include="ComWrapper\RJCP\Trace\Log.cs" />
+    <Compile Include="ComWrapper\RJCP\Trace\LoggerTraceListener.cs" />
+    <Compile Include="ComWrapper\RJCP\Trace\LogSource.cs" />
+    <Compile Include="ComWrapper\RJCP\Trace\LogSourceFactory.cs" />
+    <Compile Include="SvgIcons\SvgIcons.cs" />
+    <Compile Include="Tools\Application.cs" />
+    <Compile Include="Tools\DoubleBufferBmp.cs" />
+    <Compile Include="Tools\FormsHelper.cs" />
+    <Compile Include="Tools\Graph.cs" />
+    <Compile Include="Tools\MobileAverageCalculator.cs" />
+    <Compile Include="Tools\RetainedSetting.cs" />
+    <Compile Include="UserControls\FlatComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserControls\GrblButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserControls\GrblGroupBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UserControls\GrblPanel3D.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\GrblPanel3D.Designer.cs">
+      <DependentUpon>GrblPanel3D.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Obj3D\Objects3D.cs" />
     <Compile Include="Resources\ResourceHelper.cs" />
     <Compile Include="SafetyCountdown.cs">
       <SubType>Form</SubType>
@@ -183,6 +267,171 @@
     <Compile Include="LegalDisclaimer.Designer.cs">
       <DependentUpon>LegalDisclaimer.cs</DependentUpon>
     </Compile>
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Assets\Asset.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Assets\Material.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Assets\Texture.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Cameras\ArcBallCamera.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Cameras\Camera.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Cameras\FrustumCamera.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Cameras\LookAtCamera.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Cameras\OrthographicCamera.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Cameras\PerspectiveCamera.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Collections.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\ArcBall.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\BoundingVolume.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\IBindable.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\IFreezable.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\IHasMaterial.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\IHasObjectSpace.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\IHasOpenGLContext.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\IRenderable.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\IVolumeBound.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\RenderMode.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\SceneContainer.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\SceneElement.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\SceneElementTraversal.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Core\VertexGrid.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\DisplayList.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Effects\ArcBallTransformationEffect.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Effects\Effect.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Effects\LinearTransformationEffect.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Effects\OpenGLAttributesEffect.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Evaluators\Evaluator.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Evaluators\Evaluator1D.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Evaluators\Evaluator2D.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Evaluators\NURBS.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Evaluators\NurbsCurve.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Evaluators\NurbsSurface.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Face.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Feedback\Feedback.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Feedback\Polygonator.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Feedback\Triangulator.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\GLColor.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Helpers\BoundingVolumeHelper.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Helpers\FreezableHelper.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Helpers\HasObjectSpaceHelper.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Helpers\OpenGLHelper.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Helpers\SceneHelper.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\IDeepClonable.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Index.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Lighting\Light.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Lighting\Spotlight.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Matrix.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\AccumBufferAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\ColorBufferAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\CurrentAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\DepthBufferAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\EnableAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\EvalAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\FogAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\HintAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\LightingAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\LineAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\ListAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\OpenGLAttributeGroup.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\PixelModeAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\PointAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\PolygonAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\PolygonStippleAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\ScissorAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\StencilBufferAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\TextureAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\TransformAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLAttributes\ViewportAttributes.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLEventArgs.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\OpenGLSceneGraphExtensions.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\ParticleSystem\Particle.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\ParticleSystem\ParticleSystems.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Plane.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Primitives\Axies.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Primitives\Cube.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Primitives\Folder.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Primitives\Grid.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Primitives\Polygon.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Primitives\Shadow.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Primitives\Teapot.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Quadrics\Cylinder.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Quadrics\Disk.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Quadrics\DrawStyle.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Quadrics\Normals.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Quadrics\Orientation.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Quadrics\Quadric.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Quadrics\Sphere.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Raytracing\Intersection.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Raytracing\IRayTracable.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Raytracing\Ray.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Raytracing\RayTracer.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Raytracing\ScreenPixel.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Scene.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Shaders\FragmentShader.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Shaders\Shader.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Shaders\ShaderProgram.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Shaders\VertexShader.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Transformations\LinearTransformation.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Transformations\Transformation.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\UV.cs" />
+    <Compile Include="SharpGL\SharpGL.SceneGraph\Vertex.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\Caligari\CaligariChunk.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\Caligari\CaligariFileFormat.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\Caligari\CaligariFileHeader.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\Caligari\CaligariPrimitives.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\Caligari\PolygonChunk.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\Discreet\Chunks.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\Discreet\DiscreetFormat.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\IFileFormat.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\SerializationEngine.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\SharpGL\SharpGLXmlFormat.cs" />
+    <Compile Include="SharpGL\SharpGL.Serialization\Wavefront\ObjFileFormat.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\GLColourPicker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SharpGL\SharpGL.WinForms\IdleTimeManager.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\MaterialListViewItem.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\NETDesignSurface\Converters\MaterialCollectionConverter.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\NETDesignSurface\Converters\VertexConverter.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\NETDesignSurface\Designers\OpenGLControlDesigner.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\NETDesignSurface\DesignSurface.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\NETDesignSurface\Editors\CameraCollectionEditor.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\NETDesignSurface\Editors\EvaluatorCollectionEditor.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\NETDesignSurface\Editors\QuadricCollectionEditor.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\NETDesignSurface\Editors\UITextureEditor.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\OpenGLControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SharpGL\SharpGL.WinForms\OpenGLControl.Designer.cs">
+      <DependentUpon>OpenGLControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SharpGL\SharpGL.WinForms\RenderEventArgs.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\RenderTrigger.cs" />
+    <Compile Include="SharpGL\SharpGL.WinForms\SceneControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SharpGL\SharpGL.WinForms\VertexControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SharpGL\SharpGL\DIBSection.cs" />
+    <Compile Include="SharpGL\SharpGL\Enumerations\OpenGLEnumerations.cs" />
+    <Compile Include="SharpGL\SharpGL\FontBitmaps.cs" />
+    <Compile Include="SharpGL\SharpGL\FontOutlines.cs" />
+    <Compile Include="SharpGL\SharpGL\OpenGL.cs" />
+    <Compile Include="SharpGL\SharpGL\OpenGLExtensions.cs" />
+    <Compile Include="SharpGL\SharpGL\RenderContextProviders\DIBSectionRenderContextProvider.cs" />
+    <Compile Include="SharpGL\SharpGL\RenderContextProviders\ExternalRenderContextProvider.cs" />
+    <Compile Include="SharpGL\SharpGL\RenderContextProviders\FBORenderContextProvider.cs" />
+    <Compile Include="SharpGL\SharpGL\RenderContextProviders\HiddenWindowRenderContextProvider.cs" />
+    <Compile Include="SharpGL\SharpGL\RenderContextProviders\IRenderContextProvider.cs" />
+    <Compile Include="SharpGL\SharpGL\RenderContextProviders\NativeWindowRenderContextProvider.cs" />
+    <Compile Include="SharpGL\SharpGL\RenderContextProviders\RenderContextProvider.cs" />
+    <Compile Include="SharpGL\SharpGL\RenderContextType.cs" />
+    <Compile Include="SharpGL\SharpGL\Shaders\Shader.cs" />
+    <Compile Include="SharpGL\SharpGL\Shaders\ShaderCompilationException.cs" />
+    <Compile Include="SharpGL\SharpGL\Shaders\ShaderProgram.cs" />
+    <Compile Include="SharpGL\SharpGL\Version\OpenGLVersion.cs" />
+    <Compile Include="SharpGL\SharpGL\Version\VersionAttribute.cs" />
+    <Compile Include="SharpGL\SharpGL\VertexBuffers\IndexBuffer.cs" />
+    <Compile Include="SharpGL\SharpGL\VertexBuffers\VertexBuffer.cs" />
+    <Compile Include="SharpGL\SharpGL\VertexBuffers\VertexBufferArray.cs" />
+    <Compile Include="SharpGL\SharpGL\Win32.cs" />
     <Compile Include="Tools\Project.cs" />
     <Compile Include="Core\VigoCore.cs" />
     <Compile Include="CsPotrace\PotraceClipper.cs" />
@@ -775,6 +1024,7 @@
     <Compile Include="UserControls\GrblTextBox.Designer.cs">
       <DependentUpon>GrblTextBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\IGrblPanel.cs" />
     <Compile Include="UserControls\ImageButton.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -815,9 +1065,22 @@
     <Compile Include="UserControls\LabelTB.Designer.cs">
       <DependentUpon>LabelTB.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\NumericInput\NumericUpDown.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\NumericInput\NumericUpDown.Designer.cs">
+      <DependentUpon>NumericUpDown.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PlaceholderTextbox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="UserControls\TextInput.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControls\TextInput.Designer.cs">
+      <DependentUpon>TextInput.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ThemeMgr.cs" />
     <Compile Include="UserControls\UsageClassPreview.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -846,11 +1109,20 @@
       <DependentUpon>DiscoveryForm.cs</DependentUpon>
     </Compile>
     <Compile Include="WiFiDiscovery\IPAddressHelper.cs" />
+    <EmbeddedResource Include="AutoUpdate\NewVersionForm.ja-JP.resx">
+      <DependentUpon>NewVersionForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="AutoUpdate\NewVersionForm.nl-NL.resx">
+      <DependentUpon>NewVersionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AutoUpdate\NewVersionForm.pt-BR.resx">
       <DependentUpon>NewVersionForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AutoUpdate\NewVersionForm.ro-RO.resx">
       <DependentUpon>NewVersionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ConnectLogForm.ja-JP.resx">
+      <DependentUpon>ConnectLogForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ConnectLogForm.nl-NL.resx">
       <DependentUpon>ConnectLogForm.cs</DependentUpon>
@@ -860,6 +1132,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ConnectLogForm.uk.resx">
       <DependentUpon>ConnectLogForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CustomButtonForm.ja-JP.resx">
+      <DependentUpon>CustomButtonForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CustomButtonForm.nl-NL.resx">
       <DependentUpon>CustomButtonForm.cs</DependentUpon>
@@ -873,35 +1148,152 @@
     <EmbeddedResource Include="CustomButtonForm.uk.resx">
       <DependentUpon>CustomButtonForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ExceptionManager.ja-JP.resx">
+      <DependentUpon>ExceptionManager.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ExceptionManager.pt-BR.resx">
       <DependentUpon>ExceptionManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExceptionManager.zh-CN.resx">
+      <DependentUpon>ExceptionManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Firmware\FlashGrbl.pt-BR.resx">
+      <DependentUpon>FlashGrbl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Firmware\FlashGrbl.zh-CN.resx">
+      <DependentUpon>FlashGrbl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generator\CuttingTest.pt-BR.resx">
+      <DependentUpon>CuttingTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Generator\CuttingTest.resx">
       <DependentUpon>CuttingTest.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Generator\CuttingTest.zh-CN.resx">
+      <DependentUpon>CuttingTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generator\PowerVsSpeedForm.pt-BR.resx">
+      <DependentUpon>PowerVsSpeedForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Generator\PowerVsSpeedForm.resx">
       <DependentUpon>PowerVsSpeedForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generator\PowerVsSpeedForm.zh-CN.resx">
+      <DependentUpon>PowerVsSpeedForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generator\ShakeTest.ja-JP.resx">
+      <DependentUpon>ShakeTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Generator\ShakeTest.pt-BR.resx">
+      <DependentUpon>ShakeTest.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Generator\ShakeTest.resx">
       <DependentUpon>ShakeTest.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Generator\ShakeTest.zh-CN.resx">
+      <DependentUpon>ShakeTest.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="GrblConfig.ja-JP.resx">
+      <DependentUpon>GrblConfig.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GrblConfig.pt-BR.resx">
       <DependentUpon>GrblConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="HotkeyManagerForm.ja-JP.resx">
+      <DependentUpon>HotkeyManagerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HotkeyManagerForm.pt-BR.resx">
       <DependentUpon>HotkeyManagerForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="HotkeyManagerForm.zh-CN.resx">
+      <DependentUpon>HotkeyManagerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="IssueDetectorForm.ja-JP.resx">
+      <DependentUpon>IssueDetectorForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="IssueDetectorForm.pt-BR.resx">
       <DependentUpon>IssueDetectorForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LaserLifeEdit.pt-BR.resx">
+      <DependentUpon>LaserLifeEdit.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LaserLifeEdit.resx">
+      <DependentUpon>LaserLifeEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LaserLifeEdit.zh-CN.resx">
       <DependentUpon>LaserLifeEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LaserSelector.resx">
       <DependentUpon>LaserSelector.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LaserUsage.pt-BR.resx">
+      <DependentUpon>LaserUsage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="LaserUsage.resx">
       <DependentUpon>LaserUsage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LaserUsage.zh-CN.resx">
+      <DependentUpon>LaserUsage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LegalDisclaimer.ja-JP.resx">
+      <DependentUpon>LegalDisclaimer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LegalDisclaimer.pt-BR.resx">
+      <DependentUpon>LegalDisclaimer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LegalDisclaimer.zh-CN.resx">
+      <DependentUpon>LegalDisclaimer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm.ja-JP.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSHelper\PSEditorForm.ja-JP.resx">
+      <DependentUpon>PSEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSHelper\PSEditorForm.pt-BR.resx">
+      <DependentUpon>PSEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSHelper\PSEditorForm.zh-CN.resx">
+      <DependentUpon>PSEditorForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSHelper\PSHelperForm.ja-JP.resx">
+      <DependentUpon>PSHelperForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSHelper\PSHelperForm.pt-BR.resx">
+      <DependentUpon>PSHelperForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PSHelper\PSHelperForm.zh-CN.resx">
+      <DependentUpon>PSHelperForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RasterConverter\ConvertSizeAndOptionForm.ja-JP.resx">
+      <DependentUpon>ConvertSizeAndOptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RasterConverter\RasterToLaserForm.ja-JP.resx">
+      <DependentUpon>RasterToLaserForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RasterConverter\ResolutionHelperForm.ja-JP.resx">
+      <DependentUpon>ResolutionHelperForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ResumeJobForm.ja-JP.resx">
+      <DependentUpon>ResumeJobForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RunFromPositionForm.ja-JP.resx">
+      <DependentUpon>RunFromPositionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SaveOptionForm.ja-JP.resx">
+      <DependentUpon>SaveOptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SaveOptionForm.zh-CN.resx">
+      <DependentUpon>SaveOptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SettingsForm.ja-JP.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SvgConverter\ConvertSizeAndOptionForm.ja-JP.resx">
+      <DependentUpon>ConvertSizeAndOptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\GrblPanel3D.resx">
+      <DependentUpon>GrblPanel3D.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PreviewForm.pt-BR.resx">
       <DependentUpon>PreviewForm.cs</DependentUpon>
@@ -1048,6 +1440,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.nl-NL.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.ro-RO.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
@@ -1055,11 +1448,26 @@
     <EmbeddedResource Include="SettingsForm.uk.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SharpGL\SharpGL.WinForms\GLColourPicker.resx">
+      <DependentUpon>GLColourPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SharpGL\SharpGL.WinForms\OpenGLControl.resx">
+      <DependentUpon>OpenGLControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SharpGL\SharpGL.WinForms\SceneControl.resx">
+      <DependentUpon>SceneControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SharpGL\SharpGL.WinForms\VertexControl.resx">
+      <DependentUpon>VertexControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SvgConverter\ConvertSizeAndOptionForm.nl-NL.resx">
       <DependentUpon>ConvertSizeAndOptionForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SvgConverter\ConvertSizeAndOptionForm.ro-RO.resx">
       <DependentUpon>ConvertSizeAndOptionForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControls\TextInput.resx">
+      <DependentUpon>TextInput.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserControls\UsageClassPreview.resx">
       <DependentUpon>UsageClassPreview.cs</DependentUpon>
@@ -1067,13 +1475,28 @@
     <EmbeddedResource Include="WiFiConfigurator\OrturWiFiConfig.resx">
       <DependentUpon>OrturWiFiConfig.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WiFiConfigurator\OrturWiFiConfigPrompt.ja-JP.resx">
+      <DependentUpon>OrturWiFiConfigPrompt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WiFiConfigurator\OrturWiFiConfigPrompt.pt-BR.resx">
+      <DependentUpon>OrturWiFiConfigPrompt.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WiFiConfigurator\OrturWiFiConfigPrompt.resx">
+      <DependentUpon>OrturWiFiConfigPrompt.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WiFiConfigurator\OrturWiFiConfigPrompt.zh-CN.resx">
       <DependentUpon>OrturWiFiConfigPrompt.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WiFiDiscovery\DiscoveryForm.hu-HU.resx">
       <DependentUpon>DiscoveryForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="WiFiDiscovery\DiscoveryForm.ja-JP.resx">
+      <DependentUpon>DiscoveryForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WiFiDiscovery\DiscoveryForm.nl-NL.resx">
+      <DependentUpon>DiscoveryForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WiFiDiscovery\DiscoveryForm.pt-BR.resx">
       <DependentUpon>DiscoveryForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WiFiDiscovery\DiscoveryForm.resx">
@@ -1087,6 +1510,11 @@
     <EmbeddedResource Include="CSV\setting_codes.ortur.GrblHal.csv" />
     <EmbeddedResource Include="CSV\alarm_codes.ortur.GrblHal.csv" />
     <EmbeddedResource Include="CSV\error_codes.ortur.GrblHal.csv" />
+    <EmbeddedResource Include="Icons\LegacyIcons.data" />
+    <EmbeddedResource Include="Icons\LegacyIcons.header" />
+    <EmbeddedResource Include="WiFiDiscovery\DiscoveryForm.zh-CN.resx">
+      <DependentUpon>DiscoveryForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Resources\flag_greece.png" />
     <EmbeddedResource Include="Generator\SVG\LaserGRBL-accuracy-test-file.svg" />
     <Content Include="Grafica\777494-200.png" />
@@ -1827,6 +2255,12 @@
     <EmbeddedResource Include="Strings.nl-NL.resx">
       <DependentUpon>Strings.resx</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Strings.uk.resx">
+      <DependentUpon>Strings.resx</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Strings.ja-JP.resx">
+      <DependentUpon>Strings.resx</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="RasterConverter\ConvertSizeAndOptionForm.da.resx">
       <DependentUpon>ConvertSizeAndOptionForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -2053,6 +2487,12 @@
     <None Include="PSHelper\MaterialDB.xss">
       <DependentUpon>MaterialDB.xsd</DependentUpon>
     </None>
+    <EmbeddedResource Include="SvgIcons\Custom.data" />
+    <EmbeddedResource Include="SvgIcons\Custom.header" />
+    <EmbeddedResource Include="SvgIcons\Mdi.data" />
+    <EmbeddedResource Include="SvgIcons\Mdi.header" />
+    <EmbeddedResource Include="SvgIcons\Flags.data" />
+    <EmbeddedResource Include="SvgIcons\Flags.header" />
     <None Include="SvgLibrary\Basic Shapes\DOM.cd" />
     <EmbeddedResource Include="SvgLibrary\Resources\svg11.dtd" />
   </ItemGroup>

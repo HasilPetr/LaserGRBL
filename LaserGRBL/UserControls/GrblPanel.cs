@@ -9,10 +9,11 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 using LaserGRBL;
+using SharpGL;
 
 namespace LaserGRBL.UserControls
 {
-	public partial class GrblPanel : UserControl
+	public partial class GrblPanel : UserControl, IGrblPanel
 	{
 		GrblCore Core;
 		System.Drawing.Bitmap mBitmap;
@@ -27,6 +28,10 @@ namespace LaserGRBL.UserControls
 		public GrblPanel()
 		{
 			InitializeComponent();
+			Settings.CurrentGraphicMode = Settings.GraphicMode.GDI;
+			GrblPanel3D.CurrentVendor = "LaserGRBL";
+			GrblPanel3D.CurrentRenderer = "Legacy Preview";
+			Logger.LogMessage("OpenGL", "{0}->{1} {2}, {3}", Settings.RequestedGraphicMode, Settings.CurrentGraphicMode, GrblPanel3D.CurrentVendor, GrblPanel3D.CurrentRenderer);
 
 			SetStyle(ControlStyles.UserPaint, true);
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
@@ -125,7 +130,7 @@ namespace LaserGRBL.UserControls
 		private Brush GetBrush(Color color)
 		{ return new SolidBrush(color); }
 
-		public void SetComProgram(GrblCore core)
+		public void SetCore(GrblCore core)
 		{
 			Core = core;
 			Core.OnFileLoading += OnFileLoading;
@@ -250,7 +255,7 @@ namespace LaserGRBL.UserControls
 		}
 
 
-		internal void OnColorChange()
+		public void OnColorChange()
 		{
 			RecreateBMP();
 		}
@@ -260,7 +265,7 @@ namespace LaserGRBL.UserControls
 			if (Settings.GetObject("Click N Jog", true))
 			{
 				PointF coord = DrawToMachine(new PointF(e.X, e.Y));
-				Core.BeginJog(coord, e.Button == MouseButtons.Right);
+				Core.JogToPosition(coord, e.Button == MouseButtons.Right);
 			}
 		}
 	}

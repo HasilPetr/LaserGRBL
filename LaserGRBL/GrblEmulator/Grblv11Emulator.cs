@@ -14,6 +14,7 @@ namespace LaserGRBL.GrblEmulator
 
 	public class Grblv11Emulator
 	{
+		private const bool EMULATE_RANDOM_ERRORS = false;
 		private const bool EMULATE_MISSING_OK = false;
 
 		private static string filename = System.IO.Path.Combine(GrblCore.DataPath, "GrblEmulator.v11.bin");
@@ -168,20 +169,20 @@ namespace LaserGRBL.GrblEmulator
 		private void GrblReset()
 		{
 			lock (rxBuf)
-			{
-				rxBuf.Clear();
-				System.Threading.Thread.Sleep(50);
-				
-				mCheck = mPaused = false;
-				toSleep = TimeSpan.Zero;
+			{ rxBuf.Clear(); }
 
-				SPB = new GrblCommand.StatePositionBuilder();
+			System.Threading.Thread.Sleep(50);
+				
+			mCheck = mPaused = false;
+			toSleep = TimeSpan.Zero;
+
+			SPB = new GrblCommand.StatePositionBuilder();
 				
 
-				EmuLog(null);
-				EmuLog("Grbl Reset");
-				SendVersion();
-			}
+			EmuLog(null);
+			EmuLog("Grbl Reset");
+			SendVersion();
+			
 		}
 
 		//private void PrintArray(byte[] p)
@@ -223,38 +224,45 @@ namespace LaserGRBL.GrblEmulator
 
 		private void ManageRX()
 		{
+			string line = null;
+			int queue = 0;
+
 			lock (rxBuf)
 			{
 				if (rxBuf.Count > 0 && !mPaused)
 				{
-					try
-					{
-						string line = rxBuf.Dequeue();
-
-                        if (line == "$$\n")
-                            SendConfig();
-                        else if (IsSetConf(line))
-                            SetConfig(line);
-                        else if (line == "$C\n")
-                            SwapCheck();
-                        else if (line == "$H\n")
-                            EmulateHoming();
-                        else if (line == "$I\n")
-                            SendInfo();
-                        else if (line.StartsWith("$J="))
-                            EmulateCommand(new JogCommand(line));
-                        else
-                            EmulateCommand(new GrblCommand(line));
-
-						EmuLog(line.Trim("\n".ToCharArray()));
-					}
-					catch (Exception)
-					{
-					}
+					line = rxBuf.Dequeue();
+					queue = rxBuf.Count;
 				}
-
-				RX.SleepTime = rxBuf.Count > 0 ? 0 : 1;
 			}
+
+			if (line != null)
+			{
+				try
+				{
+                    if (line == "$$\n")
+                        SendConfig();
+                    else if (IsSetConf(line))
+                        SetConfig(line);
+                    else if (line == "$C\n")
+                        SwapCheck();
+                    else if (line == "$H\n")
+                        EmulateHoming();
+                    else if (line == "$I\n")
+                        SendInfo();
+                    else if (line.StartsWith("$J="))
+                        EmulateCommand(new JogCommand(line));
+                    else
+                        EmulateCommand(new GrblCommand(line));
+
+					EmuLog(line.Trim("\n".ToCharArray()));
+				}
+				catch (Exception)
+				{
+				}
+			}
+
+			RX.SleepTime = queue > 0 ? 0 : 1;
 		}
 
         private void SendInfo()
@@ -325,7 +333,7 @@ namespace LaserGRBL.GrblEmulator
 				try
 				{
 					TimeSpan cmdTime = SPB.AnalyzeCommand(cmd, true, conf);
-					toSleep += cmdTime;
+					toSleep += TimeSpan.FromTicks(cmdTime.Ticks);
 
 					if (toSleep.TotalMilliseconds > 15) //execute sleep
 					{
@@ -345,9 +353,10 @@ namespace LaserGRBL.GrblEmulator
 				catch (Exception ex) { throw ex; }
 				finally { cmd.DeleteHelper(); }
 			}
-
-			if (!EMULATE_MISSING_OK || rng.Next(0, 20) != 0)
-				EnqueueTX("ok");
-		}
+            if (EMULATE_RANDOM_ERRORS && rng.Next(0, 50) == 0)
+                EnqueueTX("error:2");
+            else if (!EMULATE_MISSING_OK || rng.Next(0, 20) != 0)
+                EnqueueTX("ok");
+        }
 	}
 }

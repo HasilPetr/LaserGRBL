@@ -223,4 +223,28 @@
   <data name="LblOptions.Text" xml:space="preserve">
     <value>选项</value>
   </data>
+  <data name="CbRestoreWCO.Text" xml:space="preserve">
+    <value>Home @</value>
+  </data>
+  <data name="LblSomeLines.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="RbSomeLines.Text" xml:space="preserve">
+    <value>在停止前恢复一些行</value>
+  </data>
+  <data name="LblLineNumber.Text" xml:space="preserve">
+    <value>Line #</value>
+  </data>
+  <data name="LblBegin.Text" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="LblSent.Text" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="TxtCause.Text" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Resume Job</value>
+  </data>
 </root>

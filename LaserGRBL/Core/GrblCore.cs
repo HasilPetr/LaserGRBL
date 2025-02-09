@@ -14,8 +14,10 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Web;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using Tools;
 using static LaserGRBL.GrblCore;
+using static LaserGRBL.HotKeysManager;
 
 namespace LaserGRBL
 {
@@ -33,6 +35,8 @@ namespace LaserGRBL
 		public static string GCODE_STD_HEADER = "G90 (use absolute coordinates)";
 		public static string GCODE_STD_PASSES = ";(Uncomment if you want to sink Z axis)\r\n;G91 (use relative coordinates)\r\n;G0 Z-1 (sinks the Z axis, 1mm)\r\n;G90 (use absolute coordinates)";
 		public static string GCODE_STD_FOOTER = "G0 X0 Y0 Z0 (move back to origin)";
+
+		private static string CH340Version;
 
 		[Serializable]
 		public class ThreadingMode
@@ -91,7 +95,7 @@ namespace LaserGRBL
 		{ Disconnected, Connecting, Idle, Run, Hold, Door, Home, Alarm, Check, Jog, Queue, Cooling, AutoHold, Tool } // "Tool" added in GrblHal
 
 		public enum JogDirection
-		{ None, Abort, Home, N, S, W, E, NW, NE, SW, SE, Zup, Zdown }
+		{ Abort, Home, N, S, W, E, NW, NE, SW, SE, Zup, Zdown, Position }
 
 		public enum StreamingMode
 		{ Buffered, Synchronous, RepeatOnError }
@@ -103,6 +107,7 @@ namespace LaserGRBL
 			int mMinor;
 			char mBuild;
 			bool mOrtur;
+			bool mLonger;
 			bool mGrblHal;
 
 			string mVendorInfo;
@@ -114,6 +119,7 @@ namespace LaserGRBL
 				mVendorInfo = VendorInfo;
 				mVendorVersion = VendorVersion;
 				mOrtur = VendorInfo != null && (VendorInfo.Contains("Ortur") || VendorInfo.Contains("Aufero"));
+				mLonger = VendorInfo != null && (VendorInfo.Contains("Longer"));
 				mGrblHal = IsHAL;
 			}
 
@@ -219,8 +225,9 @@ namespace LaserGRBL
 			public int Major => mMajor;
 			public int Minor => mMinor;
 			public bool IsOrtur => mOrtur;
+			public bool IsLonger => mLonger;
 			public bool IsHAL => mGrblHal;
-			public bool IsLuckyOrturWiFi => IsOrtur && mVendorInfo == "Ortur Laser Master 3";
+			public bool IsLuckyWiFi => (IsOrtur && mVendorInfo == "Ortur Laser Master 3") || (IsLonger && mVendorInfo == "Longer Nano");
 			public string MachineName => mVendorInfo;
 
 			public string VendorName
@@ -261,6 +268,9 @@ namespace LaserGRBL
 		public event dlgOnOverrideChange OnOverrideChange;
 		public event dlgOnLoopCountChange OnLoopCountChange;
 		public event dlgJogStateChange JogStateChange;
+		public event Action<GrblCore> OnAutoSizeDrawing;
+		public event Action<GrblCore> OnZoomInDrawing;
+		public event Action<GrblCore> OnZoomOutDrawing;
 
 		private System.Windows.Forms.Control syncro;
 		protected ComWrapper.IComWrapper com;
@@ -285,12 +295,9 @@ namespace LaserGRBL
 		private int mGrblBlocks = -1;
 		private int mGrblBuffer = -1;
 		private int mFailedConnection = 0;
-		private JogDirection mPrenotedJogDirection = JogDirection.None;
-		private float mPrenotedJogSpeed = 100;
+
 		protected TimeProjection mTP = new TimeProjection();
-
 		private MacStatus mMachineStatus = MacStatus.Disconnected;
-
 
 		private float mCurF;
 		private float mCurS;
@@ -323,9 +330,20 @@ namespace LaserGRBL
 		private string mDetectedIP = null;
 		private bool mDoingSend = false;
 
+        public RetainedSetting<bool> ShowLaserOffMovements { get; } = new RetainedSetting<bool>("ShowLaserOffMovements", true);
+        public RetainedSetting<bool> ShowExecutedCommands { get; } = new RetainedSetting<bool>("ShowExecutedCommands", true);
+		public RetainedSetting<bool> ShowPerformanceDiagnostic { get; } = new RetainedSetting<bool>("ShowPerformanceDiagnostic", false);
+        public RetainedSetting<bool> ShowBoundingBox { get; } = new RetainedSetting<bool>("ShowBoundingBox", true);
+        public RetainedSetting<bool> CrossCursor { get; } = new RetainedSetting<bool>("CrossCursor", true);
+        public RetainedSetting<float> PreviewLineSize { get; } = new RetainedSetting<float>("PreviewLineSize", 1f);
+        public RetainedSetting<bool> AutoSizeOnDrawing { get; } = new RetainedSetting<bool>("AutoSizeOnDrawing", true);
 
+		static GrblCore() //static constructor for static initialization
+		{
+			System.Threading.ThreadPool.QueueUserWorkItem(GetCH340Version);
+		}
 
-		public GrblCore(System.Windows.Forms.Control syncroObject, PreviewForm cbform, JogForm jogform)
+        public GrblCore(System.Windows.Forms.Control syncroObject, PreviewForm cbform, JogForm jogform)
 		{
 			if (Type != Firmware.Grbl) Logger.LogMessage("Program", "Load {0} core", Type);
 
@@ -346,11 +364,9 @@ namespace LaserGRBL
 
 			mThreadingMode = Settings.GetObject("Threading Mode", ThreadingMode.Fast);
 
-
-
-			QueryTimer = new Tools.PeriodicEventTimer(TimeSpan.FromMilliseconds(mThreadingMode.StatusQuery), false);
-			TX = new Tools.ThreadObject(ThreadTX, 1, true, "Serial TX Thread", StartTX);
-			RX = new Tools.ThreadObject(ThreadRX, 1, true, "Serial RX Thread", null);
+            QueryTimer = new Tools.PeriodicEventTimer(TimeSpan.FromMilliseconds(mThreadingMode.StatusQuery), false);
+			TX = new Tools.ThreadObject(ThreadTX, 1, true, "Serial TX Thread", StartTX, System.Threading.ThreadPriority.Highest);
+			RX = new Tools.ThreadObject(ThreadRX, 1, true, "Serial RX Thread", null, System.Threading.ThreadPriority.Highest);
 
 			file = new GrblFile(0, 0, Configuration.TableWidth, Configuration.TableHeight);  //create a fake range to use with manual movements
 
@@ -376,6 +392,41 @@ namespace LaserGRBL
 
 			if (GrblVersion != null)
 				CSVD.LoadAppropriateCSV(GrblVersion); //load setting for last known version
+		}
+
+		public static void GetCH340Version(Object stateInfo)
+		{
+			try
+			{
+				System.Management.ManagementObjectSearcher objSearcher = new System.Management.ManagementObjectSearcher("SELECT * FROM Win32_PnPSignedDriver WHERE Description LIKE '%CH340%' OR Caption LIKE '%CH340%' OR DriverProviderName LIKE '%wch.cn%' OR Manufacturer LIKE '%wch.cn%'");
+
+				System.Management.ManagementObjectCollection objCollection = objSearcher.Get();
+
+				foreach (System.Management.ManagementObject obj in objCollection)
+				{
+					try
+					{
+						string devname = obj["Caption"] as string;
+						if (string.IsNullOrWhiteSpace(devname)) devname = obj["Description"] as string;
+							
+						string manu = obj["Manufacturer"] as string;
+						if (string.IsNullOrWhiteSpace(manu)) manu = obj["DriverProviderName"] as string;
+
+						if ((devname != null && devname.ToLower().Contains("ch340")) || (manu != null && manu.ToLower().Contains("wch.cn")))
+						{
+							string date = obj["DriverDate"] as string;
+							if (date != null && date.Length >= 8) date = date.Substring(0, 8);
+
+							string version = obj["DriverVersion"] as string;
+
+							CH340Version = String.Format("Device='{0}' Manufacturer='{1}' Version='{2}' Date='{3}'", devname, manu, version, date);
+							break;
+						}
+					}
+					catch { }
+				}
+			}
+			catch { }
 		}
 
 		internal void HotKeyOverride(HotKeysManager.HotKey.Actions action)
@@ -508,8 +559,9 @@ namespace LaserGRBL
 				if (GrblVersion == null || !GrblVersion.Equals(value))
 				{
 					CSVD.LoadAppropriateCSV(value);
-					Settings.SetObject("Last GrblVersion known", value);
 				}
+
+				Settings.SetObject("Last GrblVersion known", value);
 			}
 		}
 
@@ -575,7 +627,7 @@ namespace LaserGRBL
 			mTP.Reset(true);
 
 			if (OnFileLoaded != null)
-				OnFileLoading(elapsed, filename);
+				OnFileLoading?.Invoke(elapsed, filename);
 		}
 
 		void RiseOnFileLoaded(long elapsed, string filename)
@@ -583,22 +635,22 @@ namespace LaserGRBL
 			mTP.Reset(true);
 
 			if (OnFileLoaded != null)
-				OnFileLoaded(elapsed, filename);
+				OnFileLoaded?.Invoke(elapsed, filename);
 		}
 
 		public GrblFile LoadedFile
 		{ get { return file; } }
 
-		public void ReOpenFile(System.Windows.Forms.Form parent)
+		public void ReOpenFile()
 		{
 			if (CanReOpenFile)
-				OpenFile(parent, Settings.GetObject<string>("Core.LastOpenFile", null));
+				OpenFile(Settings.GetObject<string>("Core.LastOpenFile", null));
 		}
 
 		public static readonly List<string> ImageExtensions = new List<string>(new string[] { ".jpg", ".jpeg", ".bmp", ".png", ".gif" });
 		public static readonly List<string> GCodeExtensions = new List<string>(new string[] { ".nc", ".cnc", ".tap", ".gcode", ".ngc" });
 		public static readonly List<string> ProjectFileExtensions = new List<string>(new string[] { ".lps" });
-		public void OpenFile(Form parent, string filename = null, bool append = false)
+		public void OpenFile(string filename = null, bool append = false)
 		{
 			if (!CanLoadNewFile) return;
 
@@ -621,12 +673,12 @@ namespace LaserGRBL
 						DialogResult dialogResult = DialogResult.Cancel;
 						try
 						{
-							dialogResult = ofd.ShowDialog(parent);
+							dialogResult = ofd.ShowDialog(FormsHelper.MainForm);
 						}
 						catch (System.Runtime.InteropServices.COMException)
 						{
 							ofd.AutoUpgradeEnabled = false;
-							dialogResult = ofd.ShowDialog(parent);
+							dialogResult = ofd.ShowDialog(FormsHelper.MainForm);
 						}
 
 						if (dialogResult == DialogResult.OK)
@@ -643,7 +695,7 @@ namespace LaserGRBL
 				{
 					try
 					{
-						RasterConverter.RasterToLaserForm.CreateAndShowDialog(this, filename, parent, append);
+						RasterConverter.RasterToLaserForm.CreateAndShowDialog(this, filename, append);
 						UsageCounters.RasterFile++;
 					}
 					catch (Exception ex)
@@ -656,7 +708,7 @@ namespace LaserGRBL
 					{
 						try
 						{
-							SvgConverter.SvgToGCodeForm.CreateAndShowDialog(this, filename, parent, append);
+							SvgConverter.SvgToGCodeForm.CreateAndShowDialog(this, filename, append);
 							UsageCounters.SvgFile++;
 						}
 						catch (Exception ex)
@@ -689,7 +741,7 @@ namespace LaserGRBL
 
 						try
 						{
-							RasterConverter.RasterToLaserForm.CreateAndShowDialog(this, bmpname, parent, append);
+							RasterConverter.RasterToLaserForm.CreateAndShowDialog(this, bmpname, append);
 							UsageCounters.RasterFile++;
 							if (System.IO.File.Exists(bmpname))
 								System.IO.File.Delete(bmpname);
@@ -732,9 +784,9 @@ namespace LaserGRBL
 						// Open file
 						Settings.SetObject("Core.LastOpenFile", imageFilepath);
 						if (i == 0)
-							ReOpenFile(parent);
+							ReOpenFile();
 						else
-							OpenFile(parent, imageFilepath, true);
+							OpenFile(imageFilepath, true);
 
 						// Delete temporary image file
 						System.IO.File.Delete(imageFilepath);
@@ -1087,6 +1139,59 @@ namespace LaserGRBL
 		{
 			//throw new NotImplementedException();
 			mDetectedIP = null;
+
+			if (GrblVersion.IsOrtur)
+				WriteOrturWiFi(ssid, password);
+			else if (GrblVersion.IsLonger)
+				WriteLongerWiFi(ssid, password);
+		}
+
+		private void WriteLongerWiFi(string ssid, string password)
+		{
+
+			lock (this)
+			{
+				mQueuePtr.Enqueue(new GrblCommand("$radio/mode=sta", 0, true));
+				mQueuePtr.Enqueue(new GrblCommand($"$sta/ssid={ssid}", 0, true));
+				mQueuePtr.Enqueue(new GrblCommand($"$sta/password={password}", 0, true));
+				mQueuePtr.Enqueue(new GrblCommand("$wifi/begin", 0, true));
+			}
+
+			try
+			{
+				//while (com.IsOpen && (mQueuePtr.Count > 0 || HasPendingCommands())) //resta in attesa del completamento della comunicazione
+				//	;
+
+				System.Threading.Thread.Sleep(2);
+
+				int errors = 0;
+				foreach (IGrblRow row in mSentPtr)
+				{
+					if (row is GrblCommand)
+						if (((GrblCommand)row).Status == GrblCommand.CommandStatus.ResponseBad)
+							errors++;
+				}
+
+				//if (errors > 0)
+				//	throw new WriteConfigException(mSentPtr);
+			}
+			catch (Exception ex)
+			{
+				//Logger.LogException("Write Config", ex);
+				//throw (ex);
+			}
+			finally
+			{
+				//lock (this)
+				//{
+				//	//mQueuePtr = mQueue;
+				//	//mSentPtr = mSent; //restore queue
+				//}
+			}
+		}
+
+		private void WriteOrturWiFi(string ssid, string password)
+		{
 			if (CanReadWriteConfig)
 			{
 				lock (this)
@@ -1129,7 +1234,6 @@ namespace LaserGRBL
 					//}
 				}
 			}
-
 		}
 
 		public void WriteConfig(List<GrblConfST.GrblConfParam> config)
@@ -1209,7 +1313,7 @@ namespace LaserGRBL
 
 					lock (this)
 					{
-						mQueue.Clear(); //flush the queue of item to send
+						ClearQueue(mQueue); //flush the queue of item to send
 						mQueue.Enqueue(new GrblCommand("M5")); //shut down laser
 					}
 				}
@@ -1282,19 +1386,19 @@ namespace LaserGRBL
 		private void OnJobCycle()
 		{
 			Logger.LogMessage("EnqueueProgram", "Push Passes");
-			ExecuteCustombutton(Settings.GetObject("GCode.CustomPasses", GrblCore.GCODE_STD_PASSES));
+			ExecuteCustomCode(Settings.GetObject("GCode.CustomPasses", GrblCore.GCODE_STD_PASSES));
 		}
 
 		protected virtual void OnJobBegin()
 		{
 			Logger.LogMessage("EnqueueProgram", "Push Header");
-			ExecuteCustombutton(Settings.GetObject("GCode.CustomHeader", GrblCore.GCODE_STD_HEADER));
+			ExecuteCustomCode(Settings.GetObject("GCode.CustomHeader", GrblCore.GCODE_STD_HEADER));
 		}
 
 		protected virtual void OnJobEnd()
 		{
 			Logger.LogMessage("EnqueueProgram", "Push Footer");
-			ExecuteCustombutton(Settings.GetObject("GCode.CustomFooter", GrblCore.GCODE_STD_FOOTER));
+			ExecuteCustomCode(Settings.GetObject("GCode.CustomFooter", GrblCore.GCODE_STD_FOOTER));
 		}
 
 		private void ContinueProgramFromKnown(int position, bool homing, bool setwco)
@@ -1368,6 +1472,8 @@ namespace LaserGRBL
 				com = new ComWrapper.UsbSerial();
 			else if (wraptype == ComWrapper.WrapperType.UsbSerial2 && (com == null || com.GetType() != typeof(ComWrapper.UsbSerial2)))
 				com = new ComWrapper.UsbSerial2();
+			else if (wraptype == ComWrapper.WrapperType.RJCPSerial && (com == null || com.GetType() != typeof(ComWrapper.RJCPSerial)))
+				com = new ComWrapper.RJCPSerial();
 			else if (wraptype == ComWrapper.WrapperType.Telnet && (com == null || com.GetType() != typeof(ComWrapper.Telnet)))
 				com = new ComWrapper.Telnet();
 			else if (wraptype == ComWrapper.WrapperType.LaserWebESP8266 && (com == null || com.GetType() != typeof(ComWrapper.LaserWebESP8266)))
@@ -1382,6 +1488,9 @@ namespace LaserGRBL
 		{
 			try
 			{
+				FixCH340 = false;
+				FixCH340_exception = FixCH340_goodread = 0;
+
 				mAutoBufferSize = DEFAULT_BUFFER_SIZE; //reset to default buffer size
 				SetStatus(MacStatus.Connecting);
 				connectStart = Tools.HiResTimer.TotalMilliseconds;
@@ -1601,31 +1710,87 @@ namespace LaserGRBL
 			}
 		}
 
-		internal void EnqueueZJog(JogDirection dir, decimal step, bool fast)
+		public void JogToPosition(PointF target, bool fast) => JogToPosition(target, fast ? 100000 : JogSpeed); //da chiamare su doppio click
+		public void JogToPosition(PointF target, float speed)
 		{
-			if (JogEnabled)
-			{
-				mPrenotedJogSpeed = (fast ? 100000 : JogSpeed);
+			target = LimitToBound(target); //if soft limit enabled -> crop to machine area
 
-				if (SupportTrueJogging)
-					DoJogV11(dir, step);
-				else
-					EmulateJogV09(dir, step); //immediato
-			}
+			if (!JogEnabled) //cannot jog now
+				return;
+
+			if (!SupportTrueJogging) //old firmware
+				EnqueueJogV09(target, speed);
+			else if (!ContinuosJogEnabled)	//continuous jog disabled
+				EnqueueJogV11(target, speed);
+			else
+				ContinuousJog.ToPosition(target, speed);
 		}
 
-		public void BeginJog(PointF target, bool fast)
+		public void ContinuousJogToPosition(PointF target, float speed) 
 		{
-			if (JogEnabled)
-			{
-				mPrenotedJogSpeed = (fast ? 100000 : JogSpeed);
-				target = LimitToBound(target);
+			target = LimitToBound(target); //if soft limit enabled -> crop to machine area
 
-				if (SupportTrueJogging)
-					DoJogV11(target);
-				else
-					EmulateJogV09(target);
-			}
+			if (!JogEnabled) //cannot jog now
+				return;
+
+			if (!SupportTrueJogging)                                                            // old firmware
+				return; //not supported by firmware
+
+			ContinuousJog.ToPosition(target, speed);
+		}
+
+		public void JogToDirection(JogDirection dir, bool fast) => JogToDirection(dir, fast, JogStep);
+		public void JogToDirection(JogDirection dir, bool fast, decimal step) => JogToDirection(dir, fast ? 100000 : JogSpeed, step);
+		public void JogToDirection(JogDirection dir, float speed, decimal step) 
+		{
+			if (dir == JogDirection.Abort)
+				throw new ArgumentException("Invalid option", "dir");
+			if (dir == JogDirection.Position)
+				throw new ArgumentException("Invalid option", "dir");
+
+			if (!JogEnabled)																		// cannot jog now
+				return;																					// ignore request
+			
+			if (!SupportTrueJogging)															// old firmware
+				EnqueueJogV09(dir, step, speed);														// immediate enqueue old command
+			else if (!ContinuosJogEnabled || dir == JogDirection.Zdown || dir == JogDirection.Zup)  // continuous jog disabled && Z movement
+				EnqueueJogV11(dir, step, speed);                                                        // immediate enqueue new command
+			else                                                                                    // continuoud jog enabled
+				ContinuousJog.ToDirection(dir, speed);                                                    // assign jog target
+		}
+
+		public void ContinuousJogToDirection(JogDirection dir, float speed)
+		{
+			if (dir == JogDirection.Abort)
+				throw new ArgumentException("Invalid option", "dir");
+			if (dir == JogDirection.Position)
+				throw new ArgumentException("Invalid option", "dir");
+
+			if (!JogEnabled)                                                                        // cannot jog now
+				return;
+
+			if (!SupportTrueJogging)                                                            // old firmware
+				return; //not supported by firmware
+
+			ContinuousJog.ToDirection(dir, speed);
+		}
+
+		public void JogAbort() //da chiamare su ButtonUp
+		{
+			if (!SupportTrueJogging)																// old firmware
+				;																						// abort not supported
+			else if (!ContinuosJogEnabled)															// continuous jog disabled
+				;                                                                                       // we can abort but we don't want
+			else                                                                                    // continuoud jog enabled
+				ContinuousJog.Abort();														               // assign jog target
+		}
+
+		public void ContinuousJogAbort() //da chiamare su ButtonUp
+		{
+			if (!SupportTrueJogging)                                                                // old firmware
+				return;                                                                                       // abort not supported
+			
+			ContinuousJog.Abort();                                                                     // assign jog target
 		}
 
 		private PointF LimitToBound(PointF target)
@@ -1640,29 +1805,16 @@ namespace LaserGRBL
 			return target;
 		}
 
-		public void BeginJog(JogDirection dir, bool fast) //da chiamare su ButtonDown
-		{
-			if (JogEnabled)
-			{
-				mPrenotedJogSpeed = (fast ? 100000 : JogSpeed);
-
-				if (SupportTrueJogging)
-					DoJogV11(dir, JogStep);
-				else
-					EmulateJogV09(dir, JogStep);
-			}
-		}
-
-		private void EmulateJogV09(JogDirection dir, decimal step) //emulate jog using plane G-Code
+		private void EnqueueJogV09(JogDirection dir, decimal step, float speed) //emulate jog using plane G-Code
 		{
 			if (dir == JogDirection.Home)
 			{
 				EnqueueCommand(new GrblCommand(string.Format("G90")));
-				EnqueueCommand(new GrblCommand(string.Format("G0X0Y0F{0}", mPrenotedJogSpeed)));
+				EnqueueCommand(new GrblCommand(string.Format("G1X0Y0F{0}", speed)));
 			}
 			else
 			{
-				string cmd = "G0";
+				string cmd = "G1";
 
 				if (dir == JogDirection.NE || dir == JogDirection.E || dir == JogDirection.SE)
 					cmd += $"X{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
@@ -1677,7 +1829,7 @@ namespace LaserGRBL
 				if (dir == JogDirection.Zup)
 					cmd += $"Z{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
 
-				cmd += $"F{mPrenotedJogSpeed}";
+				cmd += $"F{speed}";
 
 				EnqueueCommand(new GrblCommand("G91"));
 				EnqueueCommand(new GrblCommand(cmd));
@@ -1685,107 +1837,170 @@ namespace LaserGRBL
 			}
 		}
 
-		private void EmulateJogV09(PointF target) //emulate jog using plane G-Code
+		private void EnqueueJogV09(PointF target, float speed) //emulate jog using plane G-Code
 		{
-			string cmd = "G0";
+			string cmd = "G1";
 
 			cmd += $"X{target.X.ToString("0.00", NumberFormatInfo.InvariantInfo)}";
 			cmd += $"Y{target.Y.ToString("0.00", NumberFormatInfo.InvariantInfo)}";
-			cmd += $"F{mPrenotedJogSpeed}";
+			cmd += $"F{speed}";
 
 			EnqueueCommand(new GrblCommand("G90"));
 			EnqueueCommand(new GrblCommand(cmd));
 		}
 
-		private void DoJogV11(JogDirection dir, decimal step)
+		private void EnqueueJogV11(PointF target, float speed)
 		{
-			if (ContinuosJogEnabled && dir != JogDirection.Zdown && dir != JogDirection.Zup) //se C.J. e non Z => prenotato
+			EnqueueCommand(new GrblCommand(string.Format("$J=G90X{0}Y{1}F{2}", target.X.ToString("0.00", NumberFormatInfo.InvariantInfo), target.Y.ToString("0.00", NumberFormatInfo.InvariantInfo), speed)));
+		}
+
+		private void EnqueueJogV11(JogDirection dir, decimal step, float speed)
+		{
+			if (dir == JogDirection.Home)
 			{
-				mPrenotedJogDirection = dir;
-				//lo step è quello configurato
+				EnqueueCommand(new GrblCommand(string.Format("$J=G90X0Y0F{0}", speed)));
 			}
-			else //non è CJ o non è Z => immediate enqueue jog command
+			else
 			{
-				mPrenotedJogDirection = JogDirection.None;
-				if (dir == JogDirection.Home)
-					EnqueueCommand(new GrblCommand(string.Format("$J=G90X0Y0F{0}", mPrenotedJogSpeed)));
+				string cmd = "$J=G91";
+				if (dir == JogDirection.NE || dir == JogDirection.E || dir == JogDirection.SE)
+					cmd += $"X{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
+				if (dir == JogDirection.NW || dir == JogDirection.W || dir == JogDirection.SW)
+					cmd += $"X-{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
+				if (dir == JogDirection.NW || dir == JogDirection.N || dir == JogDirection.NE)
+					cmd += $"Y{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
+				if (dir == JogDirection.SW || dir == JogDirection.S || dir == JogDirection.SE)
+					cmd += $"Y-{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
+				if (dir == JogDirection.Zdown)
+					cmd += $"Z-{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
+				if (dir == JogDirection.Zup)
+					cmd += $"Z{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
+
+				cmd += $"F{speed}";
+				EnqueueCommand(new GrblCommand(cmd));
+			}
+
+		}
+
+		//private void DoJogV11(JogDirection dir, decimal step)
+		//{
+		//	// TODO: rewrite
+
+		//	//if (ContinuosJogEnabled && dir != JogDirection.Zdown && dir != JogDirection.Zup) //se C.J. e non Z => prenotato
+		//	//{
+		//	//	mPrenotedJogDirection = dir;
+		//	//	//lo step è quello configurato
+		//	//}
+		//	//else //non è CJ o non è Z => immediate enqueue jog command
+		//	//{
+		//	//	mPrenotedJogDirection = JogDirection.None;
+		//	//	if (dir == JogDirection.Home)
+		//	//		EnqueueCommand(new GrblCommand(string.Format("$J=G90X0Y0F{0}", mPrenotedJogSpeed)));
+		//	//	else
+		//	//		EnqueueCommand(GetRelativeJogCommandv11(dir, step));
+		//	//}
+		//}
+
+		//private void DoJogV11(PointF target)
+		//{
+		//	// TODO: rewrite
+
+		//	//mPrenotedJogDirection = JogDirection.None;
+		//	//SendImmediate(0x85); //abort previous jog
+		//	//EnqueueCommand(new GrblCommand(string.Format("$J=G90X{0}Y{1}F{2}", target.X.ToString("0.00", NumberFormatInfo.InvariantInfo), target.Y.ToString("0.00", NumberFormatInfo.InvariantInfo), mPrenotedJogSpeed)));
+		//}
+
+
+
+		public class ContinuousJog
+		{
+			public JogDirection Direction { get; private set; }
+			public float Speed { get; private set; } = 0.0f;
+			public PointF Target { get; private set; } = PointF.Empty;
+
+			private static string mCurrentTargetLock = "--- JOG TARGET LOCK ---";
+			private static ContinuousJog mPrev = null;
+			private static ContinuousJog mCurr = null;
+
+			private static void SetJogTarget(ContinuousJog target)
+			{
+				lock (mCurrentTargetLock)
+				{
+					mCurr = target; //what to do now
+				}
+			}
+
+			public static ContinuousJog GetAndClearTarget(out bool abortPrevCommand)
+			{
+				ContinuousJog rv = null;
+				abortPrevCommand = false;
+				lock (mCurrentTargetLock)
+				{
+					if (mCurr != null && mCurr != mPrev)
+					{
+						abortPrevCommand = mPrev != null && mPrev.Direction != JogDirection.Abort;	//if i have a prev command, and the prev command is not an abort itself, we need to abort the prev command
+						rv = mPrev = mCurr; //set prev = cur and return cur
+					}
+				}
+				return rv;
+			}
+
+			public static void Abort() => SetJogTarget(new ContinuousJog(JogDirection.Abort, 0, PointF.Empty));
+			public static void ToPosition(PointF target, float speed) => SetJogTarget(new ContinuousJog(JogDirection.Position, speed, target));
+			public static void ToDirection(JogDirection direction, float speed)
+			{
+				if (direction == JogDirection.Abort)
+					throw new ArgumentException("Invalid option", "direction");
+				if (direction == JogDirection.Position)
+					throw new ArgumentException("Invalid option", "direction");
+				if (direction == JogDirection.Zup)
+					throw new ArgumentException("Z Not supported in Continuous Jog", "direction");
+				if (direction == JogDirection.Zdown)
+					throw new ArgumentException("Z Not supported in Continuous Jog", "direction");
+
+				SetJogTarget(new ContinuousJog(direction, speed, PointF.Empty));
+			}
+
+			private ContinuousJog(JogDirection direction, float speed, PointF target)
+			{
+				this.Direction = direction;
+				this.Target = target;
+				this.Speed = speed;
+			}
+		}
+
+		private void HandleContinuosJog() // Handle only Continuos Jog - Other Jog modes are executed by enqueuing command directly
+		{
+			ContinuousJog newJog = null;
+			bool abortRequired = false;
+			if (SupportTrueJogging && !HasPendingCommands() && (newJog = ContinuousJog.GetAndClearTarget(out abortRequired)) != null) // we have all the condition for sending jog command, and we have one to send
+			{
+				if (abortRequired)
+					SendImmediate(0x85); // abort previous jog command
+
+				if (newJog.Direction == JogDirection.Abort)
+					; //nothing to send, the abort is sent by previous test if needed
+				else if (newJog.Direction == JogDirection.Position)
+					EnqueueCommand(new GrblCommand(string.Format("$J=G90X{0}Y{1}F{2}", newJog.Target.X.ToString("0.00", NumberFormatInfo.InvariantInfo), newJog.Target.Y.ToString("0.00", NumberFormatInfo.InvariantInfo), newJog.Speed)));
+				else if (newJog.Direction == JogDirection.Home)
+					EnqueueCommand(new GrblCommand(string.Format("$J=G90X0Y0F{0}", newJog.Speed)));
 				else
-					EnqueueCommand(GetRelativeJogCommandv11(dir, step));
+				{
+					JogDirection dir = newJog.Direction;
+					string cmd = "$J=G53";
+					if (dir == JogDirection.NE || dir == JogDirection.E || dir == JogDirection.SE)
+						cmd += $"X{Configuration.TableWidth.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
+					if (dir == JogDirection.NW || dir == JogDirection.W || dir == JogDirection.SW)
+						cmd += $"X{0.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
+					if (dir == JogDirection.NW || dir == JogDirection.N || dir == JogDirection.NE)
+						cmd += $"Y{Configuration.TableHeight.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
+					if (dir == JogDirection.SW || dir == JogDirection.S || dir == JogDirection.SE)
+						cmd += $"Y{0.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
+					cmd += $"F{newJog.Speed}";
+					EnqueueCommand(new GrblCommand(cmd));
+				}
 			}
 		}
-
-		private void DoJogV11(PointF target)
-		{
-			mPrenotedJogDirection = JogDirection.None;
-			SendImmediate(0x85); //abort previous jog
-			EnqueueCommand(new GrblCommand(string.Format("$J=G90X{0}Y{1}F{2}", target.X.ToString("0.00", NumberFormatInfo.InvariantInfo), target.Y.ToString("0.00", NumberFormatInfo.InvariantInfo), mPrenotedJogSpeed)));
-		}
-
-		private GrblCommand GetRelativeJogCommandv11(JogDirection dir, decimal step)
-		{
-			string cmd = "$J=G91";
-			if (dir == JogDirection.NE || dir == JogDirection.E || dir == JogDirection.SE)
-				cmd += $"X{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
-			if (dir == JogDirection.NW || dir == JogDirection.W || dir == JogDirection.SW)
-				cmd += $"X-{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
-			if (dir == JogDirection.NW || dir == JogDirection.N || dir == JogDirection.NE)
-				cmd += $"Y{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
-			if (dir == JogDirection.SW || dir == JogDirection.S || dir == JogDirection.SE)
-				cmd += $"Y-{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
-			if (dir == JogDirection.Zdown)
-				cmd += $"Z-{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
-			if (dir == JogDirection.Zup)
-				cmd += $"Z{step.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
-
-			cmd += $"F{mPrenotedJogSpeed}";
-			return new GrblCommand(cmd);
-		}
-
-		private GrblCommand GetContinuosJogCommandv11(JogDirection dir)
-		{
-			string cmd = "$J=G53";
-			if (dir == JogDirection.NE || dir == JogDirection.E || dir == JogDirection.SE)
-				cmd += $"X{Configuration.TableWidth.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
-			if (dir == JogDirection.NW || dir == JogDirection.W || dir == JogDirection.SW)
-				cmd += $"X{0.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
-			if (dir == JogDirection.NW || dir == JogDirection.N || dir == JogDirection.NE)
-				cmd += $"Y{Configuration.TableHeight.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
-			if (dir == JogDirection.SW || dir == JogDirection.S || dir == JogDirection.SE)
-				cmd += $"Y{0.ToString("0.0", NumberFormatInfo.InvariantInfo)}";
-			cmd += $"F{mPrenotedJogSpeed}";
-			return new GrblCommand(cmd);
-		}
-
-		public void EndJogV11() //da chiamare su ButtonUp
-		{
-			mPrenotedJogDirection = JogDirection.Abort;
-		}
-
-		private void PushJogCommand()
-		{
-			if (SupportTrueJogging && mPrenotedJogDirection != JogDirection.None && mPending.Count == 0)
-			{
-				if (mPrenotedJogDirection == JogDirection.Abort)
-				{
-					if (ContinuosJogEnabled)
-						SendImmediate(0x85);
-				}
-				else if (mPrenotedJogDirection == JogDirection.Home)
-				{
-					EnqueueCommand(new GrblCommand(string.Format("$J=G90X0Y0F{0}", mPrenotedJogSpeed)));
-				}
-				else
-				{
-					if (ContinuosJogEnabled)
-						EnqueueCommand(GetContinuosJogCommandv11(mPrenotedJogDirection));
-					else
-						EnqueueCommand(GetRelativeJogCommandv11(mPrenotedJogDirection, JogStep));
-				}
-
-				mPrenotedJogDirection = JogDirection.None;
-			}
-		}
-
 
 		private void StartTX()
 		{
@@ -1816,7 +2031,7 @@ namespace LaserGRBL
 
 					if (!TX.MustExitTH())
 					{
-						PushJogCommand();
+						HandleContinuosJog();
 
 						if (CanSend())
 							SendLine();
@@ -1890,7 +2105,7 @@ namespace LaserGRBL
 				return null;
 			else if (CurrentStreamingMode == StreamingMode.Buffered && mQueuePtr.Count > 0) //sono buffered e ho roba da trasmettere
 				return mQueuePtr.Peek();
-			else if (CurrentStreamingMode != StreamingMode.Buffered && mPending.Count == 0) //sono sync e sono vuoto
+			else if (CurrentStreamingMode != StreamingMode.Buffered && !HasPendingCommands()) //sono sync e sono vuoto
 				if (mRetryQueue != null) return mRetryQueue;
 				else if (mQueuePtr.Count > 0) return mQueuePtr.Peek();
 				else return null;
@@ -2004,7 +2219,7 @@ namespace LaserGRBL
 
 		private void CreateFakeOK(int count, bool auto)
 		{
-			mSentPtr.Add(new GrblMessage("Unlock from buffer stuck!", false));
+			mSentPtr.Add(new GrblMessage("Unlock from buffer stuck!", GrblMessage.MessageType.Warning));
 			string act = auto ? "auto" : "manual";
 
 			ComWrapper.ComLogger.Log("com", $"Handle Missing OK [{count}] ({act})");
@@ -2035,6 +2250,10 @@ namespace LaserGRBL
 				ManageOrturModelMessage(rline);
 			else if (IsOrturFirmwareMessage(rline))
 				ManageOrturFirmwareMessage(rline);
+			else if (IsLongerModelMessage(rline))
+				ManageLongerModelMessage(rline);
+			else if (IsLongerFirmwareMessage(rline))
+				ManageLongerFirmwareMessage(rline);
 			else if (IsSimpleLaserWelcomeMessage(rline))
 				ManageSimpleLaserWelcomeMessage(rline);
 			else if (IsStandardWelcomeMessage(rline))
@@ -2047,6 +2266,8 @@ namespace LaserGRBL
 				ManageStandardBlockingAlarm(rline);
 			else if (IsStaIPMessage(rline))
 				ManageStaIPMessage(rline);
+			else if (IsLongerIPMessage(rline))
+				ManageLongerIPMessage(rline);
 			//else if (IsOrturBlockingAlarm(rline))
 			//	ManageOrturBlockingAlarm(rline);
 			else
@@ -2068,6 +2289,21 @@ namespace LaserGRBL
 			}
 		}
 
+		private void ManageLongerIPMessage(string rline)
+		{
+			try
+			{
+				//[MSG:Connected with 192.168.1.182]
+				mDetectedIP = rline.Substring(20, rline.Length - 1 - 20);
+				ManageGenericMessage(rline); //process as usual
+			}
+			catch (Exception ex)
+			{
+				Logger.LogMessage("IP Detector", "Ex on [{0}] message", rline);
+				Logger.LogException("IP Detector", ex);
+			}
+		}
+
 		System.Text.RegularExpressions.Regex unknownWelcomeRegex = new System.Text.RegularExpressions.Regex(@"(?<fw>[a-zA-Z]+)\s+(?<maj>\d+)\.(?<min>\d+)(?<build>\D)($|\s)", System.Text.RegularExpressions.RegexOptions.Compiled);
 
 		private bool IsCommandReplyMessage(string rline) => rline.ToLower().StartsWith("ok") || rline.ToLower().StartsWith("error");
@@ -2075,8 +2311,10 @@ namespace LaserGRBL
 		private bool IsGrblHalWelcomeMessage(string rline) => rline.StartsWith("GrblHAL ");
 		private bool IsVigoWelcomeMessage(string rline) => rline.StartsWith("Grbl-Vigo:");
 		private bool IsOrturModelMessage(string rline) => rline.StartsWith("Ortur ");
+		private bool IsLongerModelMessage(string rline) => rline.StartsWith("[Machine:") && rline.EndsWith("]");
 		private bool IsAuferoModelMessage(string rline) => rline.StartsWith("Aufero ");
 		private bool IsOrturFirmwareMessage(string rline) => rline.StartsWith("OLF");
+		private bool IsLongerFirmwareMessage(string rline) => rline.StartsWith("[Software:") && rline.EndsWith("]");
 		private bool IsStandardWelcomeMessage(string rline) => rline.StartsWith("Grbl ");
 		private bool IsSimpleLaserWelcomeMessage(string rline) => rline.StartsWith("SimpleLaser ");
 		private bool IsUnknownWelcomeMessage(string rline) => mWelcomeSeen == null && unknownWelcomeRegex.IsMatch(rline);
@@ -2085,6 +2323,7 @@ namespace LaserGRBL
 		private bool IsIVerMessage(string rline) => rline.StartsWith("[VER:") && rline.EndsWith("]");
 		private bool IsIOptMessage(string rline) => rline.StartsWith("[OPT:") && rline.EndsWith("]");
 		private bool IsStaIPMessage(string rline) => rline.StartsWith("[MSG:Get IP ") && rline.EndsWith("]");
+		private bool IsLongerIPMessage(string rline) => rline.StartsWith("[MSG:Connected with ") && rline.EndsWith("]");
 		private bool IsOrturBlockingAlarm(string rline) => false;
 
 		private void ManageGenericMessage(string rline)
@@ -2246,6 +2485,47 @@ namespace LaserGRBL
 			}
 			mSentPtr.Add(new GrblMessage(rline, false));
 		}
+
+		private void ManageLongerModelMessage(string rline)
+		{
+			try
+			{
+				mVendorInfoSeen = rline;
+				mVendorInfoSeen = mVendorInfoSeen.Replace("[Machine:", "");
+				mVendorInfoSeen = mVendorInfoSeen.Replace("]", "");
+				mVendorInfoSeen = mVendorInfoSeen.Trim();
+
+				GrblVersion = new GrblVersionInfo(1, 1, 'f', mVendorInfoSeen, mVendorVersionSeen, false);
+
+				Logger.LogMessage("LongerInfo", "Detected {0}", mVendorInfoSeen);
+			}
+			catch (Exception ex)
+			{
+				Logger.LogMessage("LongerInfo", "Ex on [{0}] message", rline);
+				Logger.LogException("LongerInfo", ex);
+			}
+			mSentPtr.Add(new GrblMessage(rline, false));
+		}
+
+		private void ManageLongerFirmwareMessage(string rline)
+		{
+			try
+			{
+				mVendorVersionSeen = rline;
+				mVendorVersionSeen = mVendorVersionSeen.Replace("[Software:", "");
+				mVendorVersionSeen = mVendorVersionSeen.Replace("]", "");
+
+				GrblVersion = new GrblVersionInfo(1, 1, 'f', mVendorInfoSeen, mVendorVersionSeen, false);
+				Logger.LogMessage("LongerInfo", "Detected FW {0}", mVendorVersionSeen);
+			}
+			catch (Exception ex)
+			{
+				Logger.LogMessage("LongerInfo", "Ex on [{0}] message", rline);
+				Logger.LogException("LongerInfo", ex);
+			}
+			mSentPtr.Add(new GrblMessage(rline, false));
+		}
+
 
 		private void ManageOrturFirmwareMessage(string rline)
 		{
@@ -2469,7 +2749,7 @@ namespace LaserGRBL
 
 		protected void ManageBrokenOkMessage(string rline) //
 		{
-			mSentPtr.Add(new GrblMessage("Handle broken ok!", false));
+			mSentPtr.Add(new GrblMessage("Handle broken ok!", GrblMessage.MessageType.Warning));
 			Logger.LogMessage("CommandResponse", "Broken \"ok\" message: [{0}]", rline);
 			ManageCommandResponse("ok");
 		}
@@ -2497,11 +2777,11 @@ namespace LaserGRBL
 						Configuration.AddOrUpdate(pending.GetDecodedMessage());
 
 					//ripeti errori programma && non ho una coda (magari mi sto allineando per cambio conf buff/sync) && ho un errore && non l'ho già ripetuto troppe volte
-					if (InProgram && CurrentStreamingMode == StreamingMode.RepeatOnError && mPending.Count == 0 && pending.Status == GrblCommand.CommandStatus.ResponseBad && pending.RepeatCount < 3) //il comando eseguito ha dato errore
+					if (InProgram && CurrentStreamingMode == StreamingMode.RepeatOnError && !HasPendingCommands() && pending.Status == GrblCommand.CommandStatus.ResponseBad && pending.RepeatCount < 3) //il comando eseguito ha dato errore
 						mRetryQueue = new GrblCommand(pending.Command, pending.RepeatCount + 1); //repeat on error
 				}
 
-				if (InProgram && mQueuePtr.Count == 0 && mPending.Count == 0)
+				if (InProgram && mQueuePtr.Count == 0 && !HasPendingCommands())
 					OnProgramEnd();
 			}
 			catch (Exception ex)
@@ -2511,24 +2791,56 @@ namespace LaserGRBL
 			}
 		}
 
+
+		bool FixCH340 = false;
+		UInt32 FixCH340_goodread = 0;
+		UInt32 FixCH340_exception = 0;
 		protected static char[] trimarray = new char[] { '\r', '\n', ' ' };
 		private string WaitComLineOrDisconnect()
 		{
-			try
+			if (FixCH340 && (!com.IsOpen || !HasIncomingData())) return null;
+
+			string rv = null;
+
+			do
 			{
-				string rv = com.ReadLineBlocking();
-				if (rv == null) return null;
-				rv = rv.TrimEnd(trimarray); //rimuovi ritorno a capo
-				rv = rv.Trim(); //rimuovi spazi iniziali e finali
-				return rv.Length > 0 ? rv : null;
-			}
-			catch
-			{
-				try { CloseCom(false); }
-				catch { }
-				return null;
-			}
+				try
+				{
+					string tmp = com.ReadLineBlocking();
+					if (tmp != null)
+					{
+						tmp = tmp.TrimEnd(trimarray); //rimuovi ritorno a capo
+						tmp = tmp.Trim(); //rimuovi spazi iniziali e finali
+						if (tmp.Length > 0) rv = tmp;
+						FixCH340_goodread++;
+					}
+				}
+				catch (System.IO.IOException ex)
+				{
+					FixCH340_exception++;
+
+					if (!FixCH340 && FixCH340_exception > 5)
+					{
+						FixCH340 = true;    //self fix for CH340, use HasIncomingData to check if there is data, this reduce the number of exceptions
+						Logger.LogMessage("FixCH340", $"Detected CH340 driver: {CH340Version}");
+					}
+
+					if (FixCH340_exception % 10 == 0) System.Threading.Thread.Sleep(1);
+				}
+				catch
+				{
+					try { CloseCom(false); }
+					catch { }
+				}
+			} while (rv == null && com.IsOpen);
+
+			return rv;
+
 		}
+
+
+		
+
 
 		private bool HasIncomingData()
 		{
@@ -2653,17 +2965,17 @@ namespace LaserGRBL
 			if (mTP.JobEnd(mLoopCount == 1) && mLoopCount > 1 && mMachineStatus != MacStatus.Check)
 			{
 				Logger.LogMessage("CycleEnd", "Cycle Executed: {0} lines, {1} errors, {2}", file.Count, mTP.ErrorCount, Tools.Utils.TimeSpanToString(ProgramTime, Tools.Utils.TimePrecision.Second, Tools.Utils.TimePrecision.Second, ",", true));
-				mSentPtr.Add(new GrblMessage(string.Format("[{0} lines, {1} errors, {2}]", file.Count, mTP.ErrorCount, Tools.Utils.TimeSpanToString(ProgramTime, Tools.Utils.TimePrecision.Second, Tools.Utils.TimePrecision.Second, ",", true)), false));
-
+				mSentPtr.Add(new GrblMessage(string.Format("[{0} lines, {1} errors, {2}]", file.Count, mTP.ErrorCount, Tools.Utils.TimeSpanToString(ProgramTime, Tools.Utils.TimePrecision.Second, Tools.Utils.TimePrecision.Second, ",", true)), GrblMessage.MessageType.Diagnostic));
+				OnProgramEnded?.Invoke();
 				LoopCount--;
 				RunProgramFromStart(false, false, true);
 			}
 			else
 			{
 				Logger.LogMessage("ProgramEnd", "Job Executed: {0} lines, {1} errors, {2}", file.Count, mTP.ErrorCount, Tools.Utils.TimeSpanToString(ProgramTime, Tools.Utils.TimePrecision.Second, Tools.Utils.TimePrecision.Second, ",", true));
-				mSentPtr.Add(new GrblMessage(string.Format("[{0} lines, {1} errors, {2}]", file.Count, mTP.ErrorCount, Tools.Utils.TimeSpanToString(ProgramTime, Tools.Utils.TimePrecision.Second, Tools.Utils.TimePrecision.Second, ",", true)), false));
-
-				OnJobEnd();
+				mSentPtr.Add(new GrblMessage(string.Format("[{0} lines, {1} errors, {2}]", file.Count, mTP.ErrorCount, Tools.Utils.TimeSpanToString(ProgramTime, Tools.Utils.TimePrecision.Second, Tools.Utils.TimePrecision.Second, ",", true)), GrblMessage.MessageType.Diagnostic));
+                OnProgramEnded?.Invoke();
+                OnJobEnd();
 
 				SoundEvent.PlaySound(SoundEvent.EventId.Success);
 
@@ -2677,10 +2989,19 @@ namespace LaserGRBL
 		private bool InPause
 		{ get { return mMachineStatus != MacStatus.Run && mMachineStatus != MacStatus.Idle; } }
 
-		private void ClearQueue(bool sent)
+		private void ClearQueue(Queue<GrblCommand> queue)
+        {
+			foreach (GrblCommand command in queue)
+			{
+				command.Dispose();
+			}
+			queue.Clear();
+        }
+
+        private void ClearQueue(bool sent)
 		{
-			mQueue.Clear();
-			mPending.Clear();
+            ClearQueue(mQueue);
+            ClearQueue(mPending);
 			if (sent) mSent.Clear();
 			mRetryQueue = null;
 		}
@@ -2697,7 +3018,7 @@ namespace LaserGRBL
 		public bool QueueEmpty { get { return mQueue.Count == 0; } }
 
 		public bool CanLoadNewFile
-		{ get { return !InProgram; } }
+		{ get { return !InProgram && !file.CheckInUse(false); } }
 
 		public bool CanSendFile
 		{ get { return IsConnected && HasProgram && IdleOrCheck && QueueEmpty && !mDoingSend; } }
@@ -2856,6 +3177,11 @@ namespace LaserGRBL
 				return mHotKeyManager.ManageHotKeys(parent, keys);
 		}
 
+		internal string GetHotKeyString(HotKey.Actions action)
+		{
+			return mHotKeyManager.GetHotKeyString(action);
+		}
+
 		internal void HKConnectDisconnect()
 		{
 			if (IsConnected)
@@ -2904,7 +3230,7 @@ namespace LaserGRBL
 		{
 			mHotKeyManager.Clear();
 			mHotKeyManager.AddRange(mLocalList);
-			Settings.SetObject("Hotkey Setup", mHotKeyManager);
+			Settings.SetObject("Hotkey Setup", mHotKeyManager, true);
 		}
 
 		//internal void HKCustomButton(int index)
@@ -2915,7 +3241,7 @@ namespace LaserGRBL
 		//}
 
 		static System.Text.RegularExpressions.Regex bracketsRegEx = new System.Text.RegularExpressions.Regex(@"\[(?:[^]]+)\]");
-		internal void ExecuteCustombutton(string buttoncode)
+		internal void ExecuteCustomCode(string buttoncode)
 		{
 			buttoncode = buttoncode.Trim();
 			string[] arr = buttoncode.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
@@ -2932,7 +3258,7 @@ namespace LaserGRBL
 						SendImmediate(b);
 					}
 					else
-					{ EnqueueCommand(new GrblCommand(tosend)); }
+					{ EnqueueCommand(new GrblCommand(tosend, 0, true)); }
 				}
 			}
 		}
@@ -3052,12 +3378,30 @@ namespace LaserGRBL
 			}
 		}
 
+        public void AutoSizeDrawing()
+        {
+			OnAutoSizeDrawing?.Invoke(this);
+        }
+
+		public void ZoomInDrawing()
+		{
+			OnZoomInDrawing?.Invoke(this);
+		}
+
+		public void ZoomOutDrawing()
+		{
+			OnZoomOutDrawing?.Invoke(this);
+		}
+
 		public virtual bool UIShowGrblConfig => true;
 		public virtual bool UIShowUnlockButtons => true;
 
 		public bool IsOrturBoard { get => GrblVersion != null && GrblVersion.IsOrtur; }
+		public bool IsLongerBoard { get => GrblVersion != null && GrblVersion.IsLonger; }
 		public int FailedConnectionCount => mFailedConnection;
-	}
+
+		public event Action OnProgramEnded;
+    }
 
 	public class TimeProjection
 	{
@@ -3552,6 +3896,13 @@ namespace LaserGRBL
 				return true;
 			else
 				return false;
+		}
+
+		bool CompareValues(string a, string b)
+		{
+			if (Equals(a, b))
+				return true;
+			return false;
 		}
 
 		private bool ContainsKey(int key)

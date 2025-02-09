@@ -4,22 +4,22 @@
 // This program is distributed in the hope that it will be useful, but  WITHOUT ANY WARRANTY; without even the implied warranty of  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GPLv3  General Public License for more details.
 // You should have received a copy of the GPLv3 General Public License  along with this program; if not, write to the Free Software  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307,  USA. using System;
 
+using LaserGRBL.Icons;
+using LaserGRBL.UserControls;
 using Sound;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
+using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
 namespace LaserGRBL
 {
-	public partial class SettingsForm : Form
+    public partial class SettingsForm : Form
 	{
         private GrblCore Core;
         public static event EventHandler SettingsChanged;
+		private Settings.GraphicMode PrevGraphicMode;
 
 		public SettingsForm(GrblCore core)
 		{
@@ -31,10 +31,23 @@ namespace LaserGRBL
             ForeColor = ColorScheme.FormForeColor;
             TpVectorImport.BackColor = TpRasterImport.BackColor = TpHardware.BackColor = TpJogControl.BackColor = TpAutoCooling.BackColor  = TpGCodeSettings.BackColor = BtnCancel.BackColor = BtnSave.BackColor = TpSoundSettings.BackColor = changeConBtn.BackColor = changeDconBtn.BackColor = changeFatBtn.BackColor = changeSucBtn.BackColor = changeWarBtn.BackColor = ColorScheme.FormBackColor;
 
+			ThemeMgr.SetTheme(this, true);
+			Size btnSize = new Size(16, 16);
+			IconsMgr.PrepareButton(BtnStreamingMode, "mdi-information-slab-box", btnSize);
+            IconsMgr.PrepareButton(BtnProtocol, "mdi-information-slab-box", btnSize);
+            IconsMgr.PrepareButton(BtnThreadingModel, "mdi-information-slab-box", btnSize);
+            IconsMgr.PrepareButton(BtnFType, "mdi-information-slab-box", btnSize);
+            IconsMgr.PrepareButton(BtnModulationInfo, "mdi-information-slab-box", btnSize);
+            IconsMgr.PrepareButton(BtnTelegNoteInfo, "mdi-information-slab-box", btnSize);
+            IconsMgr.PrepareButton(imageButton1, "mdi-information-slab-box", btnSize);
+            IconsMgr.PrepareButton(BtnSave, "mdi-checkbox-marked");
+            IconsMgr.PrepareButton(BtnCancel, "mdi-close-box");
+
             InitCoreCB();
 			InitProtocolCB();
 			InitStreamingCB();
 			InitThreadingCB();
+			InitGraphicModeCB();
 
             CBCore.SelectedItem = Settings.GetObject("Firmware Type", Firmware.Grbl);
 			CBSupportPWM.Checked = Settings.GetObject("Support Hardware PWM", true);
@@ -64,6 +77,7 @@ namespace LaserGRBL
             TBFooter.Text = Settings.GetObject("GCode.CustomFooter", GrblCore.GCODE_STD_FOOTER);
             TBFooter.ForeColor = ColorScheme.FormForeColor;
             TBFooter.BackColor = ColorScheme.FormBackColor;
+            TpOptions.BackColor = ColorScheme.FormBackColor;
 
             CbPlaySuccess.Checked = Settings.GetObject($"Sound.{SoundEvent.EventId.Success}.Enabled", true);
             CbPlayWarning.Checked = Settings.GetObject($"Sound.{SoundEvent.EventId.Warning}.Enabled", true);
@@ -72,7 +86,7 @@ namespace LaserGRBL
             CbPlayDisconnect.Checked = Settings.GetObject($"Sound.{SoundEvent.EventId.Disconnect}.Enabled", true);
 
 			CbTelegramNotification.Checked = Settings.GetObject("TelegramNotification.Enabled", false);
-			TxtNotification.Text = Tools.Protector.Decrypt(Settings.GetObject("TelegramNotification.Code", ""));
+			TxtNotification.Text = Tools.Protector.Decrypt(Settings.GetObject("TelegramNotification.Code", ""), "");
 			UdTelegramNotificationThreshold.Value = (decimal)Settings.GetObject("TelegramNotification.Threshold", 1);
 
 			successSoundLabel.Text = System.IO.Path.GetFileName(Settings.GetObject($"Sound.{SoundEvent.EventId.Success}", $"Sound\\{SoundEvent.EventId.Success}.wav"));
@@ -90,6 +104,8 @@ namespace LaserGRBL
 
 			CbDisableSafetyCD.Checked = Settings.GetObject("DisableSafetyCountdown", false);
 			CbQuietSafetyCB.Checked = Settings.GetObject("QuietSafetyCountdown", false);
+            CbLegacyIcons.Checked = Settings.GetObject("LegacyIcons", false);
+			CBGraphicMode.SelectedValue = PrevGraphicMode = Settings.ConfiguredGraphicMode;
 
 			groupBox1.ForeColor = groupBox2.ForeColor = groupBox3.ForeColor = ColorScheme.FormForeColor;
 
@@ -154,6 +170,7 @@ namespace LaserGRBL
 			CBProtocol.BeginUpdate();
 			CBProtocol.Items.Add(ComWrapper.WrapperType.UsbSerial);
 			CBProtocol.Items.Add(ComWrapper.WrapperType.UsbSerial2);
+			CBProtocol.Items.Add(ComWrapper.WrapperType.RJCPSerial);
 			CBProtocol.Items.Add(ComWrapper.WrapperType.Telnet);
 			CBProtocol.Items.Add(ComWrapper.WrapperType.LaserWebESP8266);
 			CBProtocol.Items.Add(ComWrapper.WrapperType.Emulator);
@@ -167,6 +184,20 @@ namespace LaserGRBL
 			CBStreamingMode.Items.Add(GrblCore.StreamingMode.Synchronous);
 			CBStreamingMode.Items.Add(GrblCore.StreamingMode.RepeatOnError);
 			CBStreamingMode.EndUpdate();
+		}
+
+		private void InitGraphicModeCB()
+		{
+			CBGraphicMode.BeginUpdate();
+			List<KeyValuePair<string, Settings.GraphicMode>> list = new List<KeyValuePair<string, Settings.GraphicMode>>();
+			list.Add(new KeyValuePair<string, Settings.GraphicMode>("Auto", Settings.GraphicMode.AUTO));
+			list.Add(new KeyValuePair<string, Settings.GraphicMode>("Hardware Acceleration", Settings.GraphicMode.FBO));
+			list.Add(new KeyValuePair<string, Settings.GraphicMode>("Software Rendering", Settings.GraphicMode.DIB));
+			list.Add(new KeyValuePair<string, Settings.GraphicMode>("Legacy", Settings.GraphicMode.GDI));
+			CBGraphicMode.DisplayMember = "Key";
+			CBGraphicMode.ValueMember = "Value";
+			CBGraphicMode.DataSource = list;
+			CBGraphicMode.EndUpdate();
 		}
 
 		internal static void CreateAndShowDialog(Form parent, GrblCore core)
@@ -223,14 +254,24 @@ namespace LaserGRBL
 
 			Settings.SetObject("DisableSafetyCountdown", CbDisableSafetyCD.Checked);
 			Settings.SetObject("QuietSafetyCountdown", CbQuietSafetyCB.Checked);
+            Settings.SetObject("LegacyIcons", CbLegacyIcons.Checked);
+			Settings.ConfiguredGraphicMode = (Settings.GraphicMode)CBGraphicMode.SelectedValue;
 
 			SettingsChanged?.Invoke(this, null);
 
             Close();
 
-            if (Core.Type != Settings.GetObject("Firmware Type", Firmware.Grbl) && MessageBox.Show(Strings.FirmwareRequireRestartNow, Strings.FirmwareRequireRestart, MessageBoxButtons.OKCancel) == DialogResult.OK)
+			if (PrevGraphicMode != Settings.ConfiguredGraphicMode && MessageBox.Show(Strings.PreviewChangesRequiresRestart, Strings.FirmwareRequireRestart, MessageBoxButtons.OKCancel) == DialogResult.OK)
+			{
+				UsageStats.DoNotSendNow = true;
+				Application2.RestartNoCommandLine();
+			}
+			if (Core.Type != Settings.GetObject("Firmware Type", Firmware.Grbl) && MessageBox.Show(Strings.FirmwareRequireRestartNow, Strings.FirmwareRequireRestart, MessageBoxButtons.OKCancel) == DialogResult.OK)
                 Application.Restart();
-		}
+
+            if (IconsMgr.LegacyIcons != Settings.GetObject("LegacyIcons", false) && MessageBox.Show(Strings.IconsChangesRequiresRestart, Strings.FirmwareRequireRestart, MessageBoxButtons.OKCancel) == DialogResult.OK)
+                Application.Restart();
+        }
 
 		private TimeSpan MaxTs(TimeSpan a, TimeSpan b)
 		{ return TimeSpan.FromTicks(Math.Max(a.Ticks, b.Ticks)); }
@@ -326,5 +367,8 @@ namespace LaserGRBL
 		{
 			EnableTest();
 		}
+
+		private void BtnRenderingMode_Click(object sender, EventArgs e)
+		{ Tools.Utils.OpenLink(@"https://lasergrbl.com/configuration/#rendering-mode"); }
 	}
 }

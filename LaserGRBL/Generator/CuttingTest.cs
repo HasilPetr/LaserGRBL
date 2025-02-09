@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LaserGRBL.Icons;
+using LaserGRBL.UserControls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -32,13 +34,19 @@ namespace LaserGRBL.Generator
 		public CuttingTest(GrblCore core)
 		{
 			InitializeComponent();
-			mCore = core;
+            ThemeMgr.SetTheme(this, true);
+            BackColor = ColorScheme.FormBackColor;
+            ForeColor = ColorScheme.FormForeColor;
+            IconsMgr.PrepareButton(BtnOnOffInfo, "mdi-information-slab-box", new Size(16, 16));
+            IconsMgr.PrepareButton(BtnCreate, "mdi-checkbox-marked");
+            IconsMgr.PrepareButton(BtnCancel, "mdi-close-box");
+            mCore = core;
 		}
 
-		public static void CreateAndShowDialog(Form parent, GrblCore core)
+		public static void CreateAndShowDialog(GrblCore core)
 		{
 			using (CuttingTest f = new CuttingTest(core))
-				f.ShowDialog(parent);
+				f.ShowDialog(FormsHelper.MainForm);
 		}
 
 
