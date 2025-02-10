@@ -151,11 +151,29 @@
   <data name="ColPower.Width" type="System.Int32, mscorlib">
     <value>62</value>
   </data>
+  <metadata name="ColPowerY.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="ColPowerY.HeaderText" xml:space="preserve">
+    <value>Power Y</value>
+  </data>
+  <data name="ColPowerY.Width" type="System.Int32, mscorlib">
+    <value>72</value>
+  </data>
   <data name="ColSpeed.HeaderText" xml:space="preserve">
     <value>Speed</value>
   </data>
   <data name="ColSpeed.Width" type="System.Int32, mscorlib">
     <value>63</value>
+  </data>
+  <metadata name="ColSpeedY.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <data name="ColSpeedY.HeaderText" xml:space="preserve">
+    <value>Speed Y</value>
+  </data>
+  <data name="ColSpeedY.Width" type="System.Int32, mscorlib">
+    <value>73</value>
   </data>
   <data name="ColCycles.HeaderText" xml:space="preserve">
     <value>Cycles</value>
@@ -319,6 +337,36 @@
   <data name="$this.Text" xml:space="preserve">
     <value>Laser &amp; Material Database</value>
   </data>
+  <data name="&gt;&gt;source.Name" xml:space="preserve">
+    <value>source</value>
+  </data>
+  <data name="&gt;&gt;source.Type" xml:space="preserve">
+    <value>System.Windows.Forms.BindingSource, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;materialDB.Name" xml:space="preserve">
+    <value>materialDB</value>
+  </data>
+  <data name="&gt;&gt;materialDB.Type" xml:space="preserve">
+    <value>LaserGRBL.PSHelper.MaterialDB, PSHelper.MaterialDB.Designer.cs.dll, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel1.Name" xml:space="preserve">
+    <value>toolStripStatusLabel1</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;TbNewElement.Name" xml:space="preserve">
+    <value>TbNewElement</value>
+  </data>
+  <data name="&gt;&gt;TbNewElement.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;BtnImport.Name" xml:space="preserve">
+    <value>BtnImport</value>
+  </data>
+  <data name="&gt;&gt;BtnImport.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;ColID.Name" xml:space="preserve">
     <value>ColID</value>
   </data>
@@ -361,10 +409,22 @@
   <data name="&gt;&gt;ColPower.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;ColPowerY.Name" xml:space="preserve">
+    <value>ColPowerY</value>
+  </data>
+  <data name="&gt;&gt;ColPowerY.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;ColSpeed.Name" xml:space="preserve">
     <value>ColSpeed</value>
   </data>
   <data name="&gt;&gt;ColSpeed.Type" xml:space="preserve">
+    <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ColSpeedY.Name" xml:space="preserve">
+    <value>ColSpeedY</value>
+  </data>
+  <data name="&gt;&gt;ColSpeedY.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;ColCycles.Name" xml:space="preserve">
@@ -378,36 +438,6 @@
   </data>
   <data name="&gt;&gt;ColRemarks.Type" xml:space="preserve">
     <value>System.Windows.Forms.DataGridViewTextBoxColumn, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;source.Name" xml:space="preserve">
-    <value>source</value>
-  </data>
-  <data name="&gt;&gt;source.Type" xml:space="preserve">
-    <value>System.Windows.Forms.BindingSource, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;materialDB.Name" xml:space="preserve">
-    <value>materialDB</value>
-  </data>
-  <data name="&gt;&gt;materialDB.Type" xml:space="preserve">
-    <value>LaserGRBL.PSHelper.MaterialDB, PSHelper.MaterialDB.Designer.cs.dll, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatusLabel1.Name" xml:space="preserve">
-    <value>toolStripStatusLabel1</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatusLabel1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;TbNewElement.Name" xml:space="preserve">
-    <value>TbNewElement</value>
-  </data>
-  <data name="&gt;&gt;TbNewElement.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;BtnImport.Name" xml:space="preserve">
-    <value>BtnImport</value>
-  </data>
-  <data name="&gt;&gt;BtnImport.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>PSEditorForm</value>

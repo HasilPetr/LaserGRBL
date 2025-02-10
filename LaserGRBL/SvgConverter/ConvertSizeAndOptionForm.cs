@@ -185,12 +185,12 @@ namespace LaserGRBL.SvgConverter
                 if (IIBorderTracingX.Visible)
                     IIBorderTracingX.CurrentValue = row.Speed;
                 if (IIBorderTracingY.Visible)
-                    IIBorderTracingY.CurrentValue = row.Speed;
+                    IIBorderTracingY.CurrentValue = row.SpeedY;
                 //if (IILinearFilling.Visible)
                 //	IILinearFilling.CurrentValue = row.Speed;
 
                 IIMaxPowerX.CurrentValue = IIMaxPowerX.MaxValue * row.Power / 100;
-                IIMaxPowerY.CurrentValue = IIMaxPowerY.MaxValue * row.Power / 100;
+                IIMaxPowerY.CurrentValue = IIMaxPowerY.MaxValue * row.PowerY / 100;
             }
         }
         private void BtnColorFilter_Click(object sender, EventArgs e)
