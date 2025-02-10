@@ -45,7 +45,9 @@ namespace LaserGRBL.SvgConverter
         private static float gcodeYFeed = 1999;        // Y feed to apply for G1
 
         //private static bool gcodeSpindleToggle = true; // Switch on/off spindle for Pen down/up (M3/M5)
-        private static float gcodeSpindleSpeed = 999; // Spindle speed to apply
+        private static float gcodeSpindleSpeedXY = 999; // XY Spindle speed to apply
+        private static float gcodeSpindleSpeedX = 999; // X Spindle speed to apply
+        private static float gcodeSpindleSpeedY = 999; // Y Spindle speed to apply
         private static string gcodeSpindleCmdOn = "M3"; // Spindle Command M3 / M4
         private static string gcodeSpindleCmdOff = "M4"; // Spindle Command M3 / M4
 
@@ -73,14 +75,21 @@ namespace LaserGRBL.SvgConverter
             gcodeXYFeed = Math.Min(gcodeXFeed, gcodeYFeed);
 
             if (SupportPWM)
-                gcodeSpindleSpeed = Settings.GetObject("GrayScaleConversion.Gcode.LaserOptions.PowerMax", 255);
+            {
+                gcodeSpindleSpeedX = Settings.GetObject("GrayScaleConversion.Gcode.LaserOptions.PowerMaxX", 255);
+                gcodeSpindleSpeedY = Settings.GetObject("GrayScaleConversion.Gcode.LaserOptions.PowerMaxY", 255);
+            }
             else
-                gcodeSpindleSpeed = (float)GrblCore.Configuration.MaxPWM;
-
+                gcodeSpindleSpeedX = gcodeSpindleSpeedY = (float)GrblCore.Configuration.MaxPWM;
+            gcodeSpindleSpeedXY = Math.Max(gcodeSpindleSpeedX, gcodeSpindleSpeedY);
 
             // Smoothieware firmware need a value between 0.0 and 1.1
             if (firmwareType == Firmware.Smoothie)
-                gcodeSpindleSpeed /= 255.0f;
+            {
+                gcodeSpindleSpeedX /= 255.0f;
+                gcodeSpindleSpeedY /= 255.0f;
+                gcodeSpindleSpeedXY /= 255.0f;
+            }
             gcodeSpindleCmdOn = Settings.GetObject("GrayScaleConversion.Gcode.LaserOptions.LaserOn", "M3");
             gcodeSpindleCmdOff = Settings.GetObject("GrayScaleConversion.Gcode.LaserOptions.LaserOff", "M5");
             SupportPWM = Settings.GetObject("Support Hardware PWM", true); //If Support PWM use S command instead of M3-M4 / M5
@@ -164,7 +173,7 @@ namespace LaserGRBL.SvgConverter
             if (cmt.Length > 0) cmt = string.Format(" ({0})", cmt);
 
             if (SupportPWM)
-                gcodeString.AppendFormat("S{0}{1}\r\n", gcodeSpindleSpeed, cmt); //only set SMax
+                gcodeString.AppendFormat("S{0}{1}\r\n", gcodeSpindleSpeedXY, cmt); //only set SMax
             else
                 gcodeString.AppendFormat("{0}{1}\r\n", gcodeSpindleCmdOn, cmt); //only set M3/M4
         }
@@ -184,7 +193,7 @@ namespace LaserGRBL.SvgConverter
             if (SupportPWM)
                 gcodeString.AppendFormat("{0} S0\r\n", gcodeSpindleCmdOn); //turn ON with zero power
             else
-                gcodeString.AppendFormat("{0} S{1}\r\n", gcodeSpindleCmdOff, gcodeSpindleSpeed); //turn OFF and set MaxPower
+                gcodeString.AppendFormat("{0} S{1}\r\n", gcodeSpindleCmdOff, gcodeSpindleSpeedXY); //turn OFF and set MaxPower
         }
 
         internal static void PutFinalCommand(StringBuilder gcodeString)
@@ -486,6 +495,7 @@ namespace LaserGRBL.SvgConverter
             }
             string feed = "";
             float xyFeed = gcodeXYFeed;
+            float xySpindleSpeed = gcodeSpindleSpeedXY;
             StringBuilder gcodeTmp = new StringBuilder();
             bool isneeded = false;
             float x_relative = x - lastx;
@@ -518,9 +528,17 @@ namespace LaserGRBL.SvgConverter
                     if (lastg != gnr) { gcodeTmp.AppendFormat("G{0}", frmtCode(gnr)); isneeded = true; }
 
                     if (lastx != x) { gcodeTmp.AppendFormat("X{0}", frmtNum(x)); isneeded = true; }
-                    else xyFeed = gcodeYFeed;
+                    else
+                    {
+                        xyFeed = gcodeYFeed;
+                        xySpindleSpeed = gcodeSpindleSpeedY;
+                    }
                     if (lasty != y) { gcodeTmp.AppendFormat("Y{0}", frmtNum(y)); isneeded = true; }
-                    else xyFeed = gcodeXFeed;
+                    else
+                    {
+                        xyFeed = gcodeXFeed;
+                        xySpindleSpeed = gcodeSpindleSpeedX;
+                    }
                     if (z != null)
                     {
                         if (lastz != z) { gcodeTmp.AppendFormat("Z{0}", frmtNum((float)z)); isneeded = true; }
@@ -534,10 +552,10 @@ namespace LaserGRBL.SvgConverter
                         isneeded = true;
                     }
                     // Smothieware firmware need to know laserpower when G1 command is run
-                    if ((gnr == 1) && (lasts != gcodeSpindleSpeed) && firmwareType == Firmware.Smoothie)
+                    if (((gnr == 1) && (lasts != xySpindleSpeed)) || firmwareType == Firmware.Smoothie)
                     {
-                        gcodeTmp.AppendFormat("S{0}", frmtNum(gcodeSpindleSpeed));
-                        lasts = gcodeSpindleSpeed;
+                        gcodeTmp.AppendFormat("S{0}", frmtNum(xySpindleSpeed));
+                        lasts = xySpindleSpeed;
                         isneeded = true;
                     }
                     gcodeTmp.AppendFormat("{0}\r\n", cmt);
@@ -599,7 +617,7 @@ namespace LaserGRBL.SvgConverter
             // Smothieware firmware need to know laserpower when G2-G3 command is run
             if (firmwareType == Firmware.Smoothie)
             {
-                splindleSpeed = string.Format("S{0}", frmtNum(gcodeSpindleSpeed));
+                splindleSpeed = string.Format("S{0}", frmtNum(gcodeSpindleSpeedXY));
             }
             if (gcodeNoArcs || avoidG23)
             {
